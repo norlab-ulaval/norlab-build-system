@@ -6,7 +6,7 @@
 </a>
 <br>
 
-# _NorLab Project Template_
+# _Norlab Build System_
 
 </div>
 
@@ -28,27 +28,83 @@
 
 Maintainer: [Luc Coupal](https://redleader962.github.io)
 
-**Note:** This template is for code project implementation. For `latex` project such as writing proposal or conference paper, see the following list of [NorLab `TeX` template repositories](https://github.com/norlab-ulaval?q=template&type=all&language=tex&sort=)  
+<details>
+  <summary style="font-weight: bolder;font-size: large;">How to use this repository</summary>
 
-## How to use this repository template
-
-### Step 1 › Generate the new repository
-1. Click on the green `Use this template` button
-2. Click on `Create a new repository`
-3. Find a meaningful name, don't worry you can change it latter (see BC Gov [Naming Repos](https://github.com/bcgov/BC-Policy-Framework-For-GitHub/blob/master/BC-Gov-Org-HowTo/Naming-Repos.md) recommendation for advice and best-practice)  
-
-### Step 2 › Configure the repository for your project type
-(ToDo) Execute `repository_configuration_script.bash` and follow the instructions. You will be asked what kind of project your planning to undergo (latex, ros, python, c++ ...) and the component you wish to add to your repository.
-
-### Step 3 › Configure the _GitHub_ repository settings
-(ToDo) Follow the `repository_configuration_checklist.md` steps.
-We strongly recommend you to configure repository your branching scheme following Gitflow
+Just clone the *norlab-build-system* superproject as a submodule in your project repository,
+in an arbitrary directory eg.: `my-project/utilities/`.
 
 ```bash
-master ← dev ← feature 1
-             ↖ feature 2
+cd my-project
+
+git submodule init
+
+git submodule \
+  add https://github.com/norlab-ulaval/norlab-build-system.git \
+  utilities/norlab-build-system
+
+# Commit the submodule to your repository
+git add .
+git commit -m 'Added norlab-build-system submodule to repository'
 ```
-with branch protection rule via pull-request enable for the `master` and the `dev` branches.
-The `master` branch is sacred. It must be deployable at any time.  
+
+### Notes on submodule:
+
+To **clone** your repository and its submodule at the same time, use
+
+```bash
+git clone --recurse-submodules
+```
+
+Be advise, submodules are a snapshot at a specific commit of the *norlab-build-system*
+repository. To **update the submodule** to its latest commit, use
+
+```
+[sudo] git submodule update --remote --recursive --init [--force]
+```
+
+Notes:
+
+- Add the `--force` flag if you want to reset the submodule and throw away local changes to it.
+  This is equivalent to performing `git checkout --force` when `cd` in the submodule root
+  directory.
+- Add `sudo` if you get an error such
+  as `error: unable to unlink old '<name-of-a-file>': Permission denied`
+
+To set the submodule to **point to a different branch**, use
+
+```bash
+cd <the/submodule/directory>
+git checkout the_submodule_feature_branch_name
+```
+
+and use the `--recurse-submodules` flag when switching branch in your main project
+
+```bash
+cd <your/project/root>
+git checkout --recurse-submodules the_feature_branch_name
+```
 
 ---
+
+### References:
+
+#### Git Submodules
+
+- [Git Tools - Submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules)
+- [Git Submodules: Tips for JetBrains IDEs](https://www.stevestreeting.com/2022/09/20/git-submodules-tips-for-jetbrains-ides/)
+- [Git submodule tutorial – from zero to hero](https://www.augmentedmind.de/2020/06/07/git-submodule-tutorial/)
+
+#### Bats shell script testing framework references
+
+- [bats-core on github](https://github.com/bats-core/bats-core)
+- [bats-core on readthedocs.io](https://bats-core.readthedocs.io)
+- `bats` helper library (pre-installed in `norlab-build-system` testing containers in
+  the `tests/` dir)
+    - [bats-assert](https://github.com/bats-core/bats-assert)
+    - [bats-file](https://github.com/bats-core/bats-file)
+    - [bats-support](https://github.com/bats-core/bats-support)
+- Quick intro:
+    - [testing bash scripts with bats](https://www.baeldung.com/linux/testing-bash-scripts-bats)
+
+</details>
