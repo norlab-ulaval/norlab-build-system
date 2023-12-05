@@ -29,13 +29,14 @@
 Maintainer: [Luc Coupal](https://redleader962.github.io)
 
 <details>
-  <summary style="font-weight: bolder;font-size: large;">How to use this repository</summary>
+  <summary style="font-weight: bolder;font-size: large;">How to use this repository as a git submodule</summary>
 
 Just clone the *norlab-build-system* superproject as a submodule in your project repository,
 in an arbitrary directory eg.: `my-project/utilities/`.
 
 ```bash
-cd my-project
+cd <my-project>
+mkdir utilities
 
 git submodule init
 
