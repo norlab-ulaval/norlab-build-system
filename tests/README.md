@@ -4,7 +4,7 @@ Execute 'norlab-build-system' repo shell script test via 'norlab-shell-script-to
 
 Usage:
 ```shell
-bash run_bats_core_test_in_ns2t.bash ['<test-directory>[/<this-bats-test-file.bats>]' ['<image-distro>']]
+bash run_bats_core_test_in_n2st.bash ['<test-directory>[/<this-bats-test-file.bats>]' ['<image-distro>']]
 ```
 Arguments:
   - `['<test-directory>']`        The directory from which to start test, default to 'tests'
