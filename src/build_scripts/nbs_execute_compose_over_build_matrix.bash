@@ -49,9 +49,9 @@ BUILD_STATUS_PASS=0
 TMP_CWD=$(pwd)
 
 # ....Load environment variables from file.........................................................
+# Note: '.env.build_matrix.<project>' must be sourced by the script sourcing this script
 set -o allexport
 source .env
-source .env.build_matrix
 set +o allexport
 
 # ....path resolution logic........................................................................
