@@ -13,6 +13,16 @@ function nbs::source_lib(){
       source "${each_file}"
   done
 
+  cd "${NBS_ROOT_DIR}/src/container_tools"
+  for each_file in "$(pwd)"/*.bash ; do
+      source "${each_file}"
+  done
+
+  cd "${NBS_ROOT_DIR}/src/dev_scripts"
+  for each_file in "$(pwd)"/*.bash ; do
+      source "${each_file}"
+  done
+
   # (NICE TO HAVE) ToDo: append lib to PATH (ref task NMO-414)
 #  cd "${NBS_ROOT_DIR}/src/build_scripts"
 #  PATH=$PATH:${NBS_ROOT_DIR}/src/build_scripts
