@@ -44,6 +44,9 @@ git submodule \
   add https://github.com/norlab-ulaval/norlab-build-system.git \
   utilities/norlab-build-system
 
+# Traverse the submodule recursively to fetch any sub-submodule
+git submodule update --remote --recursive --init
+
 # Commit the submodule to your repository
 git add .
 git commit -m 'Added norlab-build-system submodule to repository'

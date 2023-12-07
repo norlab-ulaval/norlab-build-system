@@ -5,8 +5,8 @@ function nbs::source_lib(){
   TMP_CWD=$(pwd)
 
   # ====Begin======================================================================================
-  NBS_PATH_TO_SRC_SCRIPT="$(realpath "${BASH_SOURCE[0]}")"
-  NBS_ROOT_DIR="$(dirname "${NBS_PATH_TO_SRC_SCRIPT}")"
+  _PATH_TO_SCRIPT="$(realpath "${BASH_SOURCE[0]}")"
+  NBS_ROOT_DIR="$(dirname "${_PATH_TO_SCRIPT}")"
 
   cd "${NBS_ROOT_DIR}/src/build_scripts"
   for each_file in "$(pwd)"/*.bash ; do

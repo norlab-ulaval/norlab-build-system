@@ -65,14 +65,14 @@ teardown() {
 # ====Test casses==================================================================================
 
 @test "${TESTED_FILE} › set environment variable check › expect pass" {
-  assert_empty "${NBS_PATH_TO_SRC_SCRIPT}"
+  assert_empty "${_PATH_TO_SCRIPT}"
   assert_empty "${NBS_ROOT_DIR}"
   assert_empty "${NBS_TMP_TEST_LIB_SOURCING_ENV_EXPORT}"
 
   source "${SRC_CODE_PATH}/$TESTED_FILE"
 #  run printenv >&3
   run printenv
-  assert_not_empty "${NBS_PATH_TO_SRC_SCRIPT}"
+  assert_not_empty "${_PATH_TO_SCRIPT}"
   assert_not_empty "${NBS_ROOT_DIR}"
   assert_not_empty "${NBS_TMP_TEST_LIB_SOURCING_ENV_EXPORT}"
   assert_success
@@ -95,7 +95,7 @@ teardown() {
 }
 
 @test "validate env var are not set between test run" {
-  assert_empty "${NBS_PATH_TO_SRC_SCRIPT}"
+  assert_empty "${_PATH_TO_SCRIPT}"
   assert_empty "${NBS_ROOT_DIR}"
   assert_empty "${NBS_TMP_TEST_LIB_SOURCING_ENV_EXPORT}"
 }

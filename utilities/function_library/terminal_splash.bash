@@ -25,7 +25,7 @@ fi
 #
 #   $ echo_centering_str "···•· ${TITLE} ··•••" "\033[1;37m" "\033[0m·"
 #
-# Globals: 
+# Globals:
 #   none
 # Arguments:
 #   <theString>           The string to center

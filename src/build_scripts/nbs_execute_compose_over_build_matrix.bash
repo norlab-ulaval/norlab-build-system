@@ -41,39 +41,27 @@
 #set -v
 #set -x
 
-# ....Default......................................................................................................
+# ....Default......................................................................................
 DOCKER_COMPOSE_CMD_ARGS='build --dry-run'
 BUILD_STATUS_PASS=0
 
-# ....Project root logic...........................................................................................
+# ....Project root logic...........................................................................
 TMP_CWD=$(pwd)
 
-# ....Load environment variables from file.........................................................................
+# ....Load environment variables from file.........................................................
 set -o allexport
 source .env
 source .env.build_matrix
-#source .env.prompt    # todo: delete on task end
 set +o allexport
 
 # ....path resolution logic........................................................................
-NBS_PATH_TO_SRC_SCRIPT="$(realpath "${BASH_SOURCE[0]}")"
-NBS_ROOT_DIR="$(dirname "${NBS_PATH_TO_SRC_SCRIPT}")/../.."
+#_PATH_TO_SCRIPT="$(realpath "${BASH_SOURCE[0]}")"
+#NBS_ROOT_DIR="$(dirname "${_PATH_TO_SCRIPT}")/../.."
+NBS_PATH=$(git rev-parse --show-toplevel)
 
-# ....Helper function..............................................................................................
+# ....Helper function..............................................................................
 # import shell functions from utilities library
-pwd
-tree -L 4 -a $NBS_ROOT_DIR/utilities/norlab-shell-script-tools
-echo "››››NBS_PATH_TO_SRC_SCRIPT=$NBS_PATH_TO_SRC_SCRIPT"
-echo "››››NBS_ROOT_DIR=$NBS_ROOT_DIR"
-
-source "${NBS_ROOT_DIR}/utilities/norlab-shell-script-tools/import_norlab_shell_script_tools_lib.bash"
-
-#printenv # (Priority) ToDo: on task end >> delete this line ←
-declare -f | grep -i -e print_
-
-#source "${NBS_ROOT_DIR}/utilities/function_library/prompt_utilities.bash"
-#source "${NBS_ROOT_DIR}/utilities/function_library/general_utilities.bash"
-#source "${NBS_ROOT_DIR}/utilities/function_library/terminal_splash.bash"
+source "${NBS_PATH}/build_system/utilities/norlab-shell-script-tools/import_norlab_shell_script_tools_lib.bash"
 
 function print_help_in_terminal() {
   echo -e "\n
@@ -107,12 +95,12 @@ function print_help_in_terminal() {
 "
 }
 
-# ====Begin========================================================================================================
+# ====Begin========================================================================================
 norlab_splash "${NBS_SPLASH_NAME_BUILD_SYSTEM}" "https://github.com/${NBS_REPOSITORY_DOMAIN}/${NBS_REPOSITORY_NAME}"
 
 print_formated_script_header 'nbs_execute_compose_over_build_matrix.bash' "${NBS_LINE_CHAR_BUILDER_LVL1}"
 
-# ....Script command line flags....................................................................................
+# ....Script command line flags....................................................................
 while [ $# -gt 0 ]; do
 
   case $1 in
@@ -183,7 +171,7 @@ while [ $# -gt 0 ]; do
 done
 
 
-# ..................................................................................................................
+# ..................................................................................................
 print_msg "Build images specified in ${MSG_DIMMED_FORMAT}'${NBS_EXECUTE_BUILD_MATRIX_OVER_COMPOSE_FILE}'${MSG_END_FORMAT} following ${MSG_DIMMED_FORMAT}.env.build_matrix${MSG_END_FORMAT}"
 
 # Freeze build matrix env variable to prevent accidental override
@@ -251,7 +239,7 @@ for EACH_REPO_VERSION in "${NBS_MATRIX_REPOSITORY_VERSIONS[@]}"; do
                                           --os-version "${EACH_OS_VERSION}" \
                                           -- "${DOCKER_COMPOSE_CMD_ARGS}"
 
-        # ....Collect image tags exported by nbs_execute_compose.bash..............................................
+        # ....Collect image tags exported by nbs_execute_compose.bash..............................
         # Global: Read 'DOCKER_EXIT_CODE' env variable exported by function show_and_execute_docker
         if [[ ${DOCKER_EXIT_CODE} == 0 ]]; then
           MSG_STATUS="${MSG_DONE_FORMAT}Pass ${MSG_DIMMED_FORMAT}›"
@@ -276,7 +264,7 @@ for EACH_REPO_VERSION in "${NBS_MATRIX_REPOSITORY_VERSIONS[@]}"; do
           IMAGE_TAG_CRAWLED=("${IMAGE_TAG_CRAWLED[@]}" "${MSG_STATUS} ${NBS_IMAGE_TAG} Compile mode: ${EACH_CMAKE_BUILD_TYPE}")
           IMAGE_TAG_CRAWLED_TC=("${IMAGE_TAG_CRAWLED_TC[@]}" "${MSG_STATUS_TC_TAG} ${NBS_IMAGE_TAG} Compile mode: ${EACH_CMAKE_BUILD_TYPE}")
         fi
-        # .........................................................................................................
+        # .........................................................................................
 
         if [[ ${TEAMCITY_VERSION} ]]; then
           echo -e "##teamcity[blockClosed name='${MSG_BASE_TEAMCITY} execute nbs_execute_compose.bash']"
