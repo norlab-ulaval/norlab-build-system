@@ -43,7 +43,7 @@ TMP_CWD=$(pwd)
 # ....Load environment variables from file.........................................................................
 set -o allexport
 source .env
-source .env.prompt
+#source .env.prompt    # todo: delete on task end
 set +o allexport
 
 # ....path resolution logic........................................................................
@@ -52,9 +52,11 @@ NBS_ROOT_DIR="$(dirname "${NBS_PATH_TO_SRC_SCRIPT}")/../.."
 
 # ....Helper function..............................................................................................
 # import shell functions from utilities library
-source "${NBS_ROOT_DIR}/utilities/function_library/prompt_utilities.bash"
-source "${NBS_ROOT_DIR}/utilities/function_library/general_utilities.bash"
-source "${NBS_ROOT_DIR}/utilities/function_library/terminal_splash.bash"
+source "${NBS_ROOT_DIR}/utilities/norlab-shell-script-tools/import_norlab_shell_script_tools_lib.bash"
+
+#source "${NBS_ROOT_DIR}/utilities/function_library/prompt_utilities.bash"
+#source "${NBS_ROOT_DIR}/utilities/function_library/general_utilities.bash"
+#source "${NBS_ROOT_DIR}/utilities/function_library/terminal_splash.bash"
 
 function print_help_in_terminal() {
   echo -e "\n
@@ -92,7 +94,7 @@ print_msg "IS_TEAMCITY_RUN=${IS_TEAMCITY_RUN} ${TC_VERSION}"
 SHOW_SPLASH_EC="${SHOW_SPLASH_EC:-true}"
 
 if [[ "${SHOW_SPLASH_EC}" == 'true' ]]; then
-  norlab_splash "${NBS_BUILD_SYSTEM_SPLASH_NAME}" "https://github.com/${NBS_REPOSITORY_DOMAIN}/${NBS_REPOSITORY_NAME}"
+  norlab_splash "${NBS_SPLASH_NAME_BUILD_SYSTEM}" "https://github.com/${NBS_REPOSITORY_DOMAIN}/${NBS_REPOSITORY_NAME}"
 fi
 
 _COMPOSE_FILE="${1:?'Missing the docker-compose.yaml file mandatory argument'}"

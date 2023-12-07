@@ -20,7 +20,7 @@ TMP_CWD=$(pwd)
 # ....Load environment variables from file.........................................................................
 set -o allexport
 source .env
-source .env.prompt
+#source .env.prompt    # todo: delete on task end
 set +o allexport
 
 # ....path resolution logic........................................................................

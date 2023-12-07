@@ -52,7 +52,7 @@ TMP_CWD=$(pwd)
 set -o allexport
 source .env
 source .env.build_matrix
-source .env.prompt
+#source .env.prompt    # todo: delete on task end
 set +o allexport
 
 # ....path resolution logic........................................................................
@@ -61,9 +61,19 @@ NBS_ROOT_DIR="$(dirname "${NBS_PATH_TO_SRC_SCRIPT}")/../.."
 
 # ....Helper function..............................................................................................
 # import shell functions from utilities library
-source "${NBS_ROOT_DIR}/utilities/function_library/prompt_utilities.bash"
-source "${NBS_ROOT_DIR}/utilities/function_library/general_utilities.bash"
-source "${NBS_ROOT_DIR}/utilities/function_library/terminal_splash.bash"
+pwd
+tree -L 4 -a $NBS_ROOT_DIR/utilities/norlab-shell-script-tools
+echo "››››NBS_PATH_TO_SRC_SCRIPT=$NBS_PATH_TO_SRC_SCRIPT"
+echo "››››NBS_ROOT_DIR=$NBS_ROOT_DIR"
+
+source "${NBS_ROOT_DIR}/utilities/norlab-shell-script-tools/import_norlab_shell_script_tools_lib.bash"
+
+#printenv # (Priority) ToDo: on task end >> delete this line ←
+declare -f | grep -i -e print_
+
+#source "${NBS_ROOT_DIR}/utilities/function_library/prompt_utilities.bash"
+#source "${NBS_ROOT_DIR}/utilities/function_library/general_utilities.bash"
+#source "${NBS_ROOT_DIR}/utilities/function_library/terminal_splash.bash"
 
 function print_help_in_terminal() {
   echo -e "\n
@@ -98,7 +108,7 @@ function print_help_in_terminal() {
 }
 
 # ====Begin========================================================================================================
-norlab_splash "${NBS_BUILD_SYSTEM_SPLASH_NAME}" "https://github.com/${NBS_REPOSITORY_DOMAIN}/${NBS_REPOSITORY_NAME}"
+norlab_splash "${NBS_SPLASH_NAME_BUILD_SYSTEM}" "https://github.com/${NBS_REPOSITORY_DOMAIN}/${NBS_REPOSITORY_NAME}"
 
 print_formated_script_header 'nbs_execute_compose_over_build_matrix.bash' "${NBS_LINE_CHAR_BUILDER_LVL1}"
 
