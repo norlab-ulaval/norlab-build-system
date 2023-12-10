@@ -60,9 +60,9 @@ RUN apt-get update && \
 WORKDIR "${NBS_LIB_INSTALL_PATH}"
 RUN git clone --recurse-submodules https://github.com/norlab-ulaval/norlab-build-system.git
 
-## (CRITICAL) ToDo: on dev task end >> mute next bloc ↓↓
-#WORKDIR "${NBS_PATH}"
-#RUN git checkout dev-NMO-398-move-libpointmatcher-build-system-logic-to-norlab-build-system-submodule
+# (CRITICAL) ToDo: on dev task end >> mute next bloc ↓↓
+WORKDIR "${NBS_PATH}"
+RUN git checkout dev-NMO-398-move-libpointmatcher-build-system-logic-to-norlab-build-system-submodule
 
 # ====Begin========================================================================================
 
