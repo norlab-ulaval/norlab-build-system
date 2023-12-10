@@ -1,11 +1,11 @@
 #!/bin/bash
 #
-# Execute build matrix over docker compose file specified in NBS_EXECUTE_BUILD_MATRIX_OVER_COMPOSE_FILE
+# Execute build matrix over docker compose file specified in '.env.build_matrix.<mySuperProject>'
 #
 # Usage:
-#   $ bash nbs_execute_compose_over_build_matrix.bash [<optional flag>] [-- <any docker cmd+arg>]
+#   $ bash nbs_execute_compose_over_build_matrix.bash <.env.build_matrix.*> [<optional flag>] [-- <any docker cmd+arg>]
 #
-#   $ bash nbs_execute_compose_over_build_matrix.bash -- build --dry-run
+#   $ bash nbs_execute_compose_over_build_matrix.bash <.env.build_matrix.*> -- build --dry-run
 #
 # Arguments:
 #   [--repository-version-build-matrix-override latest]
@@ -41,39 +41,59 @@
 #set -v
 #set -x
 
-# ....Default......................................................................................
-DOCKER_COMPOSE_CMD_ARGS='build --dry-run'
-BUILD_STATUS_PASS=0
-
-# ....Project root logic...........................................................................
-TMP_CWD=$(pwd)
-
-# ....Load environment variables from file.........................................................
-# Note: '.env.build_matrix.<project>' must be sourced by the script sourcing this script
-set -o allexport
-source .env
-set +o allexport
+# ....Pre-condition................................................................................
+if [[ "$(basename "$(pwd)")" != "utility_scripts" ]]; then
+  echo -e "\n[\033[1;31mERROR\033[0m] 'nbs_install_python_dev_tools.bash' script must be sourced from the 'norlab-build-system/src/utility_scripts/' directory!\n Curent working directory is '$(pwd)'"
+  echo '(press any key to exit)'
+  read -r -n 1
+  exit 1
+fi
 
 # ....path resolution logic........................................................................
-#_PATH_TO_SCRIPT="$(realpath "${BASH_SOURCE[0]}")"
-#NBS_ROOT_DIR="$(dirname "${_PATH_TO_SCRIPT}")/../.."
-NBS_PATH=$(git rev-parse --show-toplevel)
+# (CRITICAL) ToDo: add cwd check to make sure its executed with bash and from the container_tools dir
+_PATH_TO_SCRIPT="$(realpath "${BASH_SOURCE[0]}")"
+NBS_ROOT_DIR="$(dirname "${_PATH_TO_SCRIPT}")/../.."
 
 # ....Helper function..............................................................................
 # import shell functions from utilities library
-source "${NBS_PATH}/build_system/utilities/norlab-shell-script-tools/import_norlab_shell_script_tools_lib.bash"
+source "${NBS_ROOT_DIR}/import_norlab_build_system_lib.bash"
+
+# ====Begin========================================================================================
+
+# ....Default....................................................................................
+DOCKER_COMPOSE_CMD_ARGS='build --dry-run'
+BUILD_STATUS_PASS=0
+
+# ....Project root logic.........................................................................
+TMP_CWD=$(pwd)
+
+# ....Load environment variables from file.......................................................
+DOTENV_BUILD_MATRIX_PATH="$1"
+DOTENV_BUILD_MATRIX=$( basename "$DOTENV_BUILD_MATRIX_PATH" )
+BUILD_SYSTEM_CONFIG_DIR=$( dirname "$DOTENV_BUILD_MATRIX_PATH" )
+cd "$BUILD_SYSTEM_CONFIG_DIR"
+shift
+
+if [[ ! -f "$DOTENV_BUILD_MATRIX" ]]; then
+  echo -e "\n[\033[1;31mERROR\033[0m] '$0' dotenv file $DOTENV_BUILD_MATRIX is unreachable"
+  exit 1
+else
+  set -o allexport
+  source "$DOTENV_BUILD_MATRIX"
+  set +o allexport
+fi
 
 function print_help_in_terminal() {
   echo -e "\n
-\$ ${0} [<optional flag>] [-- <any docker cmd+arg>]
+\$ $0 <.env.build_matrix.*> [<optional flag>] [-- <any docker cmd+arg>]
   \033[1m
     <optional argument>:\033[0m
       -h, --help          Get help
       --repository-version-build-matrix-override latest
-                          The libpointmatcher release tag. Override must be a single value
+                          The repository release tag. Override must be a single value
                           (default to array sequence specified in .env.build_matrix)
       --cmake-build-type-build-matrix-override RelWithDebInfo
-                          Change the libpointmatcher compilation mode.
+                          Change the cmake compilation mode.
                           Either 'None' 'Debug' 'Release' 'RelWithDebInfo' or 'MinSizeRel'
                           (default to array sequence specified in .env.build_matrix)
       --os-name-build-matrix-override ubuntu
@@ -95,12 +115,12 @@ function print_help_in_terminal() {
 "
 }
 
-# ====Begin========================================================================================
+# ====Begin======================================================================================
 norlab_splash "${NBS_SPLASH_NAME_BUILD_SYSTEM}" "https://github.com/${NBS_REPOSITORY_DOMAIN}/${NBS_REPOSITORY_NAME}"
 
-print_formated_script_header 'nbs_execute_compose_over_build_matrix.bash' "${NBS_LINE_CHAR_BUILDER_LVL1}"
+print_formated_script_header "$0" "${NBS_LINE_CHAR_BUILDER_LVL1}"
 
-# ....Script command line flags....................................................................
+# ....Script command line flags..................................................................
 while [ $# -gt 0 ]; do
 
   case $1 in
@@ -171,8 +191,8 @@ while [ $# -gt 0 ]; do
 done
 
 
-# ..................................................................................................
-print_msg "Build images specified in ${MSG_DIMMED_FORMAT}'${NBS_EXECUTE_BUILD_MATRIX_OVER_COMPOSE_FILE}'${MSG_END_FORMAT} following ${MSG_DIMMED_FORMAT}.env.build_matrix${MSG_END_FORMAT}"
+# ................................................................................................
+print_msg "Build images specified in ${MSG_DIMMED_FORMAT}'${NBS_EXECUTE_BUILD_MATRIX_OVER_COMPOSE_FILE:?'Environment variable is not set'}'${MSG_END_FORMAT} following ${MSG_DIMMED_FORMAT}.env.build_matrix${MSG_END_FORMAT}"
 
 # Freeze build matrix env variable to prevent accidental override
 # Note: declare -r ==> set as read-only, declare -a  ==> set as an array
@@ -228,18 +248,20 @@ for EACH_REPO_VERSION in "${NBS_MATRIX_REPOSITORY_VERSIONS[@]}"; do
         SHOW_SPLASH_EC='false'
 
         if [[ ${TEAMCITY_VERSION} ]]; then
-          echo -e "##teamcity[blockOpened name='${MSG_BASE_TEAMCITY} execute nbs_execute_compose.bash' description='${MSG_DIMMED_FORMAT_TEAMCITY} --repository-version ${EACH_REPO_VERSION} --cmake-build-type ${EACH_CMAKE_BUILD_TYPE} --os-name ${EACH_OS_NAME} --os-version ${EACH_OS_VERSION} -- ${DOCKER_COMPOSE_CMD_ARGS}${MSG_END_FORMAT_TEAMCITY}|n']"
+          echo -e "##teamcity[blockOpened name='${MSG_BASE_TEAMCITY} execute nbs::execute_compose' description='${MSG_DIMMED_FORMAT_TEAMCITY} --repository-version ${EACH_REPO_VERSION} --cmake-build-type ${EACH_CMAKE_BUILD_TYPE} --os-name ${EACH_OS_NAME} --os-version ${EACH_OS_VERSION} -- ${DOCKER_COMPOSE_CMD_ARGS}${MSG_END_FORMAT_TEAMCITY}|n']"
           echo " "
         fi
 
-        source "${NBS_ROOT_DIR}"/src/build_scripts/nbs_execute_compose.bash ${NBS_EXECUTE_BUILD_MATRIX_OVER_COMPOSE_FILE} \
-                                          --repository-version "${EACH_REPO_VERSION}" \
-                                          --cmake-build-type "${EACH_CMAKE_BUILD_TYPE}" \
-                                          --os-name "${EACH_OS_NAME}" \
-                                          --os-version "${EACH_OS_VERSION}" \
-                                          -- "${DOCKER_COMPOSE_CMD_ARGS}"
+#          source "${NBS_ROOT_DIR}"/src/build_scripts/nbs_execute_compose.bash ${NBS_EXECUTE_BUILD_MATRIX_OVER_COMPOSE_FILE} \
 
-        # ....Collect image tags exported by nbs_execute_compose.bash..............................
+        nbs::execute_compose ${NBS_EXECUTE_BUILD_MATRIX_OVER_COMPOSE_FILE} \
+                              --repository-version "${EACH_REPO_VERSION}" \
+                              --cmake-build-type "${EACH_CMAKE_BUILD_TYPE}" \
+                              --os-name "${EACH_OS_NAME}" \
+                              --os-version "${EACH_OS_VERSION}" \
+                              -- "${DOCKER_COMPOSE_CMD_ARGS}"
+
+        # ....Collect image tags exported by nbs::execute_compose............................
         # Global: Read 'DOCKER_EXIT_CODE' env variable exported by function show_and_execute_docker
         if [[ ${DOCKER_EXIT_CODE} == 0 ]]; then
           MSG_STATUS="${MSG_DONE_FORMAT}Pass ${MSG_DIMMED_FORMAT}›"
@@ -255,8 +277,8 @@ for EACH_REPO_VERSION in "${NBS_MATRIX_REPOSITORY_VERSIONS[@]}"; do
           fi
         fi
 
-        # Collect image tags exported by nbs_execute_compose.bash
-        # Global: Read 'NBS_IMAGE_TAG' env variable exported by nbs_execute_compose.bash
+        # Collect image tags exported by nbs::execute_compose
+        # Global: Read 'NBS_IMAGE_TAG' env variable exported by nbs::execute_compose
         if [[ ${EACH_CMAKE_BUILD_TYPE} == 'None' ]] || [[ -z ${EACH_CMAKE_BUILD_TYPE} ]]; then
           IMAGE_TAG_CRAWLED=("${IMAGE_TAG_CRAWLED[@]}" "${MSG_STATUS} ${NBS_IMAGE_TAG}")
           IMAGE_TAG_CRAWLED_TC=("${IMAGE_TAG_CRAWLED_TC[@]}" "${MSG_STATUS_TC_TAG} ${NBS_IMAGE_TAG}")
@@ -264,10 +286,10 @@ for EACH_REPO_VERSION in "${NBS_MATRIX_REPOSITORY_VERSIONS[@]}"; do
           IMAGE_TAG_CRAWLED=("${IMAGE_TAG_CRAWLED[@]}" "${MSG_STATUS} ${NBS_IMAGE_TAG} Compile mode: ${EACH_CMAKE_BUILD_TYPE}")
           IMAGE_TAG_CRAWLED_TC=("${IMAGE_TAG_CRAWLED_TC[@]}" "${MSG_STATUS_TC_TAG} ${NBS_IMAGE_TAG} Compile mode: ${EACH_CMAKE_BUILD_TYPE}")
         fi
-        # .........................................................................................
+        # .......................................................................................
 
         if [[ ${TEAMCITY_VERSION} ]]; then
-          echo -e "##teamcity[blockClosed name='${MSG_BASE_TEAMCITY} execute nbs_execute_compose.bash']"
+          echo -e "##teamcity[blockClosed name='${MSG_BASE_TEAMCITY} execute nbs::execute_compose']"
         fi
 
       done
@@ -307,9 +329,9 @@ for tag in "${IMAGE_TAG_CRAWLED[@]}" ; do
     echo -e "   ${tag}${MSG_END_FORMAT}"
 done
 
-print_formated_script_footer 'nbs_execute_compose_over_build_matrix.bash' "${NBS_LINE_CHAR_BUILDER_LVL1}"
+print_formated_script_footer "$0" "${NBS_LINE_CHAR_BUILDER_LVL1}"
 
-# ====TeamCity service message=====================================================================================
+# ====TeamCity service message===================================================================
 if [[ ${TEAMCITY_VERSION} ]]; then
   # Tag added to the TeamCity build via a service message
   for tc_build_tag in "${IMAGE_TAG_CRAWLED_TC[@]}" ; do
@@ -317,6 +339,6 @@ if [[ ${TEAMCITY_VERSION} ]]; then
   done
 fi
 
-# ====Teardown=====================================================================================================
+# ====Teardown===================================================================================
 cd "${TMP_CWD}"
 exit $BUILD_STATUS_PASS

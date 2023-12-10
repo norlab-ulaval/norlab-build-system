@@ -31,24 +31,25 @@ Maintainer: [Luc Coupal](https://redleader962.github.io)
 <details>
   <summary style="font-weight: bolder;font-size: large;">How to use this repository as a git submodule</summary>
 
-Just clone the *norlab-build-system* superproject as a submodule in your project repository,
-in an arbitrary directory eg.: `my-project/utilities/`.
+Just clone the *norlab-build-system* as a submodule in your project repository (ie the
+_superproject_), in an arbitrary directory eg.: `my-project/build_system/utilities/`.
 
 ```bash
 cd <my-project>
-mkdir utilities
+mkdir -p build_system/utilities
 
 git submodule init
 
 git submodule \
   add https://github.com/norlab-ulaval/norlab-build-system.git \
-  utilities/norlab-build-system
+  build_system/utilities/norlab-build-system
 
 # Traverse the submodule recursively to fetch any sub-submodule
 git submodule update --remote --recursive --init
 
 # Commit the submodule to your repository
-git add .
+git add .gitmodules
+git add build_system/utilities/norlab-build-system
 git commit -m 'Added norlab-build-system submodule to repository'
 ```
 
@@ -57,7 +58,7 @@ git commit -m 'Added norlab-build-system submodule to repository'
 To **clone** your repository and its submodule at the same time, use
 
 ```bash
-git clone --recurse-submodules
+git clone --recurse-submodules <project/repository/url>
 ```
 
 Be advise, submodules are a snapshot at a specific commit of the *norlab-build-system*
