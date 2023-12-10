@@ -49,7 +49,7 @@ setup_file() {
 # executed before each test
 setup() {
   set -o allexport
-  source "${SRC_CODE_PATH}"/build_system_templates/.env.template
+  source "${SRC_CODE_PATH}"/build_system_templates/.env
   set +o allexport
 
   cd "${SRC_CODE_PATH}"
