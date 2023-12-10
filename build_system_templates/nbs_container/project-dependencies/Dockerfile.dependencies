@@ -60,6 +60,10 @@ RUN apt-get update && \
 WORKDIR "${NBS_LIB_INSTALL_PATH}"
 RUN git clone --recurse-submodules https://github.com/norlab-ulaval/norlab-build-system.git
 
+## (CRITICAL) ToDo: on dev task end >> mute next bloc ↓↓
+#WORKDIR "${NBS_PATH}"
+#RUN git checkout dev-NMO-398-move-libpointmatcher-build-system-logic-to-norlab-build-system-submodule
+
 # ====Begin========================================================================================
 
 # Required for norlab-build-system path resolution logic
@@ -67,10 +71,6 @@ WORKDIR "${NBS_LIB_INSTALL_PATH}/${NBS_REPOSITORY_NAME}"
 COPY ./.git ./.git
 COPY ./${NBS_SUPERPROJECT_BUILD_SYSTEM_DIR}/.env ./${NBS_SUPERPROJECT_BUILD_SYSTEM_DIR}/
 
-#src/utility_scripts/nbs_install_python_dev_tools.bash
-RUN echo "NBS_PATH=$NBS_PATH"
-WORKDIR "${NBS_LIB_INSTALL_PATH}"
-RUN pwd && tree -L 3 -a
 WORKDIR "${NBS_PATH}/src/utility_scripts/"
 RUN chmod +x ./nbs_install_python_dev_tools.bash
 RUN bash nbs_install_python_dev_tools.bash

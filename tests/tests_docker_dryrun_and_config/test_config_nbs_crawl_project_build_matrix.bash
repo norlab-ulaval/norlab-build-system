@@ -7,7 +7,7 @@ cd "${LPM_ROOT_DIR}/../../"
 
 # ====begin========================================================================================
 set -o allexport
-source ./build_system_templates/.env.template
+source ./build_system_templates/.env
 set +o allexport
 
 cd src/utility_scripts

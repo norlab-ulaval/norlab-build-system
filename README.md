@@ -28,6 +28,13 @@
 
 Maintainer: [Luc Coupal](https://redleader962.github.io)
 
+#### `v0.2.0` release notes:
+- Be advised, this a beta release and we might introduce API breaking change without notice. 
+- This version is used in `libpointmatcher-build-system` and `libnabo-build-system` 
+- We are currently refactoring out the `dockerized-norlab` build-system logic to `norlab-build-system` for release `v1.0.0`. Stay tuned for the first stable release. 
+
+---
+
 <details>
   <summary style="font-weight: bolder;font-size: large;">How to use this repository as a git submodule</summary>
 
@@ -134,3 +141,5 @@ This should solve the problem permanently.
     - [testing bash scripts with bats](https://www.baeldung.com/linux/testing-bash-scripts-bats)
 
 </details>
+
+---
