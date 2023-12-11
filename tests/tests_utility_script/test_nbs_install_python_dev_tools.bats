@@ -34,8 +34,8 @@ fi
 
 # ====Setup========================================================================================
 
-TESTED_FILE="import_norlab_build_system_lib.bash"
-TESTED_FILE_PATH="./"
+TESTED_FILE="nbs_install_python_dev_tools.bash"
+TESTED_FILE_PATH="./src/utility_scripts"
 
 # executed once before starting the first test (valide for all test in that file)
 setup_file() {
@@ -64,38 +64,19 @@ teardown() {
 
 # ====Test casses==================================================================================
 
-@test "${TESTED_FILE} › set environment variable check › expect pass" {
-  assert_empty "${_PATH_TO_SCRIPT}"
-  assert_empty "${NBS_ROOT_DIR}"
-  assert_empty "${NBS_TMP_TEST_LIB_SOURCING_ENV_EXPORT}"
-
-  source "${SRC_CODE_PATH}/$TESTED_FILE"
-#  run printenv >&3
-  run printenv
-  assert_not_empty "${_PATH_TO_SCRIPT}"
-  assert_not_empty "${NBS_ROOT_DIR}"
-  assert_not_empty "${NBS_TMP_TEST_LIB_SOURCING_ENV_EXPORT}"
-  assert_success
-  assert_output --partial "NBS_TMP_TEST_LIB_SOURCING_ENV_EXPORT=Goooooooood morning NorLab"
-#  unset NBS_TMP_TEST_LIB_SOURCING_ENV_EXPORT
+@test "sourcing $TESTED_FILE from bad cwd › expect fail" {
+  cd "${BATS_DOCKER_WORKDIR}/src/"
+  # Note:
+  #  - "echo 'Y'" is for sending an keyboard input to the 'read' command which expect a single character
+  #    run bash -c "echo 'Y' | source ./function_library/$TESTED_FILE"
+  #  - Alt: Use the 'yes [n]' command which optionaly send n time
+  run bash -c "yes 1 | bash ./utility_scripts/$TESTED_FILE"
+  assert_failure 1
+  assert_output --partial "'$TESTED_FILE' script must be sourced from"
 }
 
-@test "${TESTED_FILE} › import function check › expect pass" {
-
-  source "${SRC_CODE_PATH}/$TESTED_FILE"
-
-  assert_empty "${NBS_TMP_TEST_LIB_SOURCING_FUNC}"
-  nbs::test_export_fct
-  assert_not_empty "${NBS_TMP_TEST_LIB_SOURCING_FUNC}"
-
-#  run printenv >&3
-  run printenv
+@test "sourcing $TESTED_FILE from ok cwd › expect pass" {
+  cd "${BATS_DOCKER_WORKDIR}/${TESTED_FILE_PATH}"
+  run bash -c "bash ./$TESTED_FILE"
   assert_success
-  assert_output --partial "NBS_TMP_TEST_LIB_SOURCING_FUNC=Let it SNOW"
-}
-
-@test "validate env var are not set between test run" {
-  assert_empty "${_PATH_TO_SCRIPT}"
-  assert_empty "${NBS_ROOT_DIR}"
-  assert_empty "${NBS_TMP_TEST_LIB_SOURCING_ENV_EXPORT}"
 }
