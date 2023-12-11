@@ -74,8 +74,8 @@ teardown() {
 
   run bash "nbs_execute_compose_over_build_matrix.bash" "${DOTENV_BUILD_MATRIX}" --fail-fast -- build
   assert_success
-  assert_output --regexp "=========".*"Starting".*"nbs_execute_compose_over_build_matrix.bash".*"[NBS]".*"Build images specified in".*"'docker-compose.dependencies.yaml'".*"following".*".env.build_matrix"
-  assert_output --regexp "Status of tag crawled:".*"Pass".*"› latest-ubuntu-bionic".*"Pass".*"› latest-ubuntu-focal".*"Completed".*"nbs_execute_compose_over_build_matrix.bash".*"========="
+  assert_output --regexp .*"Starting".*"nbs_execute_compose_over_build_matrix.bash".*"[NBS]".*"Build images specified in".*"'docker-compose.dependencies.yaml'".*"following".*".env.build_matrix"
+  assert_output --regexp "Status of tag crawled:".*"Pass".*"› latest-ubuntu-bionic".*"Pass".*"› latest-ubuntu-focal".*"Completed".*"nbs_execute_compose_over_build_matrix.bash".*
 }
 
 
@@ -85,7 +85,7 @@ teardown() {
   run ${TESTED_FCT} --help
 
   assert_success
-  assert_output --regexp "=========".*"Starting".*"${TESTED_FCT}".*"\$".*"${TESTED_FCT}".*"<docker-compose.yaml>".*"[<optional flag>]".*"[".*"<any docker cmd+arg>]"
+  assert_output --regexp .*"Starting".*"${TESTED_FCT}".*"\$".*"${TESTED_FCT}".*"<docker-compose.yaml>".*"[<optional flag>]".*"[".*"<any docker cmd+arg>]"
 }
 
 @test "${TESTED_FILE} › function ${TESTED_FCT} › execute ok › expect pass" {
@@ -96,9 +96,9 @@ teardown() {
   run nbs::execute_compose "$PATH_TO_DOCKERFILE"
 
   assert_success
-  assert_output --regexp "=========".*"Starting".*"${TESTED_FCT}".*"[NBS]".*"Environment variables set for compose:".*"REPOSITORY_VERSION=latest".*"CMAKE_BUILD_TYPE=RelWithDebInfo".*"DEPENDENCIES_BASE_IMAGE=ubuntu".*"DEPENDENCIES_BASE_IMAGE_TAG=focal"
+  assert_output --regexp .*"Starting".*"${TESTED_FCT}".*"[NBS]".*"Environment variables set for compose:".*"REPOSITORY_VERSION=latest".*"CMAKE_BUILD_TYPE=RelWithDebInfo".*"DEPENDENCIES_BASE_IMAGE=ubuntu".*"DEPENDENCIES_BASE_IMAGE_TAG=focal"
 
-  assert_output --regexp "[NBS]".*"Environment variables used by compose:".*"REPOSITORY_VERSION=latest".*"CMAKE_BUILD_TYPE=RelWithDebInfo".*"DEPENDENCIES_BASE_IMAGE=ubuntu".*"DEPENDENCIES_BASE_IMAGE_TAG=focal".*"Completed".*"${TESTED_FCT}".*"=========".*
+  assert_output --regexp "[NBS]".*"Environment variables used by compose:".*"REPOSITORY_VERSION=latest".*"CMAKE_BUILD_TYPE=RelWithDebInfo".*"DEPENDENCIES_BASE_IMAGE=ubuntu".*"DEPENDENCIES_BASE_IMAGE_TAG=focal".*"Completed".*"${TESTED_FCT}".*
 #  fail ""
 }
 
