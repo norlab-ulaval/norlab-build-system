@@ -102,7 +102,7 @@ function print_help_in_terminal() {
 # ====Begin======================================================================================
 norlab_splash "${NBS_SPLASH_NAME_BUILD_SYSTEM}" "https://github.com/${NBS_REPOSITORY_DOMAIN}/${NBS_REPOSITORY_NAME}"
 
-print_formated_script_header "$0" "${NBS_LINE_CHAR_BUILDER_LVL1}"
+print_formated_script_header "$0" "${MSG_LINE_CHAR_BUILDER_LVL1}"
 
 
 # ....Script command line flag (help case).......................................................
@@ -347,7 +347,7 @@ for tag in "${IMAGE_TAG_CRAWLED[@]}" ; do
     echo -e "   ${tag}${MSG_END_FORMAT}"
 done
 
-print_formated_script_footer "$0" "${NBS_LINE_CHAR_BUILDER_LVL1}"
+print_formated_script_footer "$0" "${MSG_LINE_CHAR_BUILDER_LVL1}"
 
 # ====TeamCity service message===================================================================
 if [[ ${TEAMCITY_VERSION} ]]; then
