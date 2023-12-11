@@ -6,7 +6,7 @@
 </a>
 <br>
 
-# _Norlab Build System_
+# _Norlab Build System (NBS)_
 
 </div>
 
@@ -28,24 +28,35 @@
 
 Maintainer: [Luc Coupal](https://redleader962.github.io)
 
+#### `v0.2.0` release notes:
+- Be advised, this a beta release and we might introduce API breaking change without notice. 
+- This version is used in `libpointmatcher-build-system` and `libnabo-build-system` 
+- We are currently refactoring out the `dockerized-norlab` build-system logic to `norlab-build-system` for release `v1.0.0`. Stay tuned for the first stable release. 
+
+---
+
 <details>
   <summary style="font-weight: bolder;font-size: large;">How to use this repository as a git submodule</summary>
 
-Just clone the *norlab-build-system* superproject as a submodule in your project repository,
-in an arbitrary directory eg.: `my-project/utilities/`.
+Just clone the *norlab-build-system* as a submodule in your project repository (ie the
+_superproject_), in an arbitrary directory eg.: `my-project/build_system/utilities/`.
 
 ```bash
 cd <my-project>
-mkdir utilities
+mkdir -p build_system/utilities
 
 git submodule init
 
 git submodule \
   add https://github.com/norlab-ulaval/norlab-build-system.git \
-  utilities/norlab-build-system
+  build_system/utilities/norlab-build-system
+
+# Traverse the submodule recursively to fetch any sub-submodule
+git submodule update --remote --recursive --init
 
 # Commit the submodule to your repository
-git add .
+git add .gitmodules
+git add build_system/utilities/norlab-build-system
 git commit -m 'Added norlab-build-system submodule to repository'
 ```
 
@@ -54,7 +65,7 @@ git commit -m 'Added norlab-build-system submodule to repository'
 To **clone** your repository and its submodule at the same time, use
 
 ```bash
-git clone --recurse-submodules
+git clone --recurse-submodules <project/repository/url>
 ```
 
 Be advise, submodules are a snapshot at a specific commit of the *norlab-build-system*
@@ -106,6 +117,104 @@ git config core.sharedRepository group
 
 This should solve the problem permanently.
 
+</details>
+
+---
+# NBS caracteristic
+- build infrastructure agnostic
+- can be used locally or on any build infrastructure e.g. _TeamCity_, _GitHub workflow_ 
+- support _**TeamCity**_ log via `teamcity_service_msg_*`
+- portable
+  - multi OS support (Ubuntu and OsX)
+  - minimal dependencies: `docker`, `docker compose`, `docker buildx`
+- simple to use
+  - configuration through `.env` and `.env.build_matrix` files
+  - convenient build script
+  - convenient install script
+- easy to update via git submodule
+
+# NBS main usage
+The main tool of this repository is a build matrix crawler named `nbs_execute_compose_over_build_matrix.bash`
+
+Assuming that the superproject (i.e. the project which have cloned `norlab-build-system` as a submodule) as the following structure,
+`build_system/` would be containing all file required to run `nbs_execute_compose_over_build_matrix.bash` (i.e. `docker-compose.yaml`
+, `Dockerfile`, `.env` and `.env.build_matrix`)
+
+```shell
+myCoolSuperProject
+┣━━ src/
+┣━━ test/
+┣━━ build_system/
+┃   ┣━━ mycoolproject_crawl_dependencies_build_matrix.bash
+┃   ┣━━ nbs_container
+┃   ┃   ┣━━ Dockerfile.dependencies
+┃   ┃   ┣━━ Dockerfile.project.ci_PR
+┃   ┃   ┗━━ entrypoint.bash
+┃   ┣━━ .env.build_matrix.dependencies
+┃   ┣━━ .env.build_matrix.project
+┃   ┣━━ .env
+┃   ┣━━ docker-compose.dependencies.yaml
+┃   ┗━━ docker-compose.project_core.yaml
+┣━━ utilities/
+┃   ┣━━ norlab-build-system/
+┃   ┗━━ norlab-shell-script-tools/
+┣━━ .git
+┣━━ .gitmodules
+┗━━ README.md
+```
+
+Invoking the crawler from a shell script `mycoolproject_crawl_dependencies_build_matrix.bash`
+```shell
+#!/bin/bash
+
+# ....path resolution logic.............................................
+_PATH_TO_SCRIPT="$(realpath "${BASH_SOURCE[0]}")"
+SUPER_ROOT_DIR="$(dirname "${_PATH_TO_SCRIPT}")../"
+
+# ====begin=============================================================
+DOTENV_BUILD_MATRIX=${SUPER_ROOT_DIR}/build_system/.env.build_matrix.dependencies
+
+cd "${SUPER_ROOT_DIR}"
+set -o allexport && source ./build_system/.env && set +o allexport
+
+cd ./utilities/norlab-build-system/src/utility_scripts
+bash nbs_execute_compose_over_build_matrix.bash \
+                      "${DOTENV_BUILD_MATRIX}" \
+                      --fail-fast \
+                      -- build --dry-run
+```
+with `.env.build_matrix.dependencies` defining a build matrix `[latest] x [None] x [ubuntu] x [focal, jammy]`,
+will result in the following 
+
+![](visual/NBS_dryrun_1.jpg)
+![](visual/NBS_dryrun_2.jpg)
+
+Execute `nbs_execute_compose_over_build_matrix.bash --help` for more details.
+
+# NBS shell script function/script library
+
+- Most code in this repository is tested using _**bats-core**_ and _**docker compose config**_ 
+- Most code is well documented: each script header and each function definition
+- Go to `build_system_templates/` for `docker-compose.yaml`, `Dockerfile`, `.env` and `.env.build_matrix` templates required to use
+  `nbs_execute_compose_over_build_matrix.bash`
+- Go to `src/utility_scripts` for utility script:
+  - execute compose over build matrix
+  - install python dev tools
+  - run all test and dryrun in directory
+- Go to `src/function_library` for shell script functions:
+  - in progress
+  
+### NBS library import
+
+To import the library functions, execute the following
+```shell
+cd <path/to/norlab-build-system>
+
+bash import_norlab_build_system_lib.bash
+# All `norlab-build-system` functions are now sourced in your current shell.
+```
+Note: `norlab-build-system` function are prefixed with `nbs`, i.e.: `nbs::<function_name>`
+
 
 ---
 
@@ -117,16 +226,5 @@ This should solve the problem permanently.
 - [Git Submodules: Tips for JetBrains IDEs](https://www.stevestreeting.com/2022/09/20/git-submodules-tips-for-jetbrains-ides/)
 - [Git submodule tutorial – from zero to hero](https://www.augmentedmind.de/2020/06/07/git-submodule-tutorial/)
 
-#### Bats shell script testing framework references
 
-- [bats-core on github](https://github.com/bats-core/bats-core)
-- [bats-core on readthedocs.io](https://bats-core.readthedocs.io)
-- `bats` helper library (pre-installed in `norlab-build-system` testing containers in
-  the `tests/` dir)
-    - [bats-assert](https://github.com/bats-core/bats-assert)
-    - [bats-file](https://github.com/bats-core/bats-file)
-    - [bats-support](https://github.com/bats-core/bats-support)
-- Quick intro:
-    - [testing bash scripts with bats](https://www.baeldung.com/linux/testing-bash-scripts-bats)
-
-</details>
+---

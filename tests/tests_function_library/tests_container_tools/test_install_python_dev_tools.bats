@@ -34,8 +34,8 @@ fi
 
 # ====Setup========================================================================================
 
-TESTED_FILE="import_norlab_build_system_lib.bash"
-TESTED_FILE_PATH="./"
+TESTED_FILE="install_python_dev_tools.bash"
+TESTED_FILE_PATH="./src/function_library/container_tools"
 
 # executed once before starting the first test (valide for all test in that file)
 setup_file() {
@@ -48,6 +48,7 @@ setup_file() {
 
 # executed before each test
 setup() {
+  source import_norlab_build_system_lib.bash
   cd "$TESTED_FILE_PATH" || exit
 }
 
@@ -64,38 +65,14 @@ teardown() {
 
 # ====Test casses==================================================================================
 
-@test "${TESTED_FILE} › set environment variable check › expect pass" {
-  assert_empty "${_PATH_TO_SCRIPT}"
-  assert_empty "${NBS_ROOT_DIR}"
-  assert_empty "${NBS_TMP_TEST_LIB_SOURCING_ENV_EXPORT}"
-
-  source "${SRC_CODE_PATH}/$TESTED_FILE"
-#  run printenv >&3
-  run printenv
-  assert_not_empty "${_PATH_TO_SCRIPT}"
-  assert_not_empty "${NBS_ROOT_DIR}"
-  assert_not_empty "${NBS_TMP_TEST_LIB_SOURCING_ENV_EXPORT}"
+@test "${TESTED_FILE} › function nbs::install_python_dev_tools execute ok › expect pass" {
+  run nbs::install_python_dev_tools
   assert_success
-  assert_output --partial "NBS_TMP_TEST_LIB_SOURCING_ENV_EXPORT=Goooooooood morning NorLab"
-#  unset NBS_TMP_TEST_LIB_SOURCING_ENV_EXPORT
+  assert_output --partial "Starting nbs::install_python_dev_tools"
+  pip list | grep -i -e wheel -e setuptools -e build
+  assert_output --partial "Pip install python packages"
 }
 
-@test "${TESTED_FILE} › import function check › expect pass" {
+# ToDo: implement >> test for IS_TEAMCITY_RUN==true casses
+# (NICE TO HAVE) ToDo: implement >> test for python intsall casses with regard to distribution
 
-  source "${SRC_CODE_PATH}/$TESTED_FILE"
-
-  assert_empty "${NBS_TMP_TEST_LIB_SOURCING_FUNC}"
-  nbs::test_export_fct
-  assert_not_empty "${NBS_TMP_TEST_LIB_SOURCING_FUNC}"
-
-#  run printenv >&3
-  run printenv
-  assert_success
-  assert_output --partial "NBS_TMP_TEST_LIB_SOURCING_FUNC=Let it SNOW"
-}
-
-@test "validate env var are not set between test run" {
-  assert_empty "${_PATH_TO_SCRIPT}"
-  assert_empty "${NBS_ROOT_DIR}"
-  assert_empty "${NBS_TMP_TEST_LIB_SOURCING_ENV_EXPORT}"
-}
