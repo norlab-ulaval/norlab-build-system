@@ -120,7 +120,7 @@ This should solve the problem permanently.
 </details>
 
 ---
-# NBS caracteristic
+# NBS caracteristics
 - build infrastructure agnostic
 - can be used locally or on any build infrastructure e.g. _TeamCity_, _GitHub workflow_ 
 - support _**TeamCity**_ log via `teamcity_service_msg_*`
@@ -134,8 +134,9 @@ This should solve the problem permanently.
 - easy to update via git submodule
 
 # NBS main usage
-The main tool of this repository is a build matrix crawler named `nbs_execute_compose_over_build_matrix.bash`
+Note: Execute `cd src/utility_scripts && bash nbs_execute_compose_over_build_matrix.bash --help` for more details.
 
+The main tool of this repository is a build matrix crawler named `nbs_execute_compose_over_build_matrix.bash`.
 Assuming that the superproject (i.e. the project which have cloned `norlab-build-system` as a submodule) as the following structure,
 `build_system/` would be containing all file required to run `nbs_execute_compose_over_build_matrix.bash` (i.e. `docker-compose.yaml`
 , `Dockerfile`, `.env` and `.env.build_matrix`)
@@ -189,7 +190,14 @@ will result in the following
 ![](visual/NBS_dryrun_1.jpg)
 ![](visual/NBS_dryrun_2.jpg)
 
-Execute `nbs_execute_compose_over_build_matrix.bash --help` for more details.
+In TeamCity, with NBS support for `##teamcity[blockOpened` and `##teamcityblockClosed` service messages, 
+a larger build matrix such as `[latest] x [Release, RelWithDebInfo, MinSizeRel] x [ubuntu] x [bionic, focal, jammy]`
+will result in the following:
+
+Note: [-] and [+] are collapsible row
+
+![](visual/NBS_dryrun_teamcity.jpg)
+
 
 # NBS shell script function/script library
 
