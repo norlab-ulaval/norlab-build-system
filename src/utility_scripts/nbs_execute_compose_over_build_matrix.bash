@@ -67,22 +67,6 @@ BUILD_STATUS_PASS=0
 # ....Project root logic.........................................................................
 TMP_CWD=$(pwd)
 
-# ....Load environment variables from file.......................................................
-DOTENV_BUILD_MATRIX_PATH="$1"
-DOTENV_BUILD_MATRIX=$( basename "$DOTENV_BUILD_MATRIX_PATH" )
-BUILD_SYSTEM_CONFIG_DIR=$( dirname "$DOTENV_BUILD_MATRIX_PATH" )
-cd "$BUILD_SYSTEM_CONFIG_DIR"
-shift
-
-if [[ ! -f "$DOTENV_BUILD_MATRIX" ]]; then
-  echo -e "\n[\033[1;31mERROR\033[0m] '$0' dotenv file $DOTENV_BUILD_MATRIX is unreachable"
-  exit 1
-else
-  set -o allexport
-  source "$DOTENV_BUILD_MATRIX"
-  set +o allexport
-fi
-
 function print_help_in_terminal() {
   echo -e "\n
 \$ $0 <.env.build_matrix.*> [<optional flag>] [-- <any docker cmd+arg>]
@@ -119,6 +103,40 @@ function print_help_in_terminal() {
 norlab_splash "${NBS_SPLASH_NAME_BUILD_SYSTEM}" "https://github.com/${NBS_REPOSITORY_DOMAIN}/${NBS_REPOSITORY_NAME}"
 
 print_formated_script_header "$0" "${NBS_LINE_CHAR_BUILDER_LVL1}"
+
+
+# ....Script command line flag (help case).......................................................
+while [ $# -gt 0 ]; do
+
+  case $1 in
+  -h | --help)
+    print_help_in_terminal
+    exit
+    ;;
+  *) # Default case
+    break
+    ;;
+  esac
+
+done
+
+
+# ....Load environment variables from file.......................................................
+DOTENV_BUILD_MATRIX_PATH="$1"
+DOTENV_BUILD_MATRIX=$( basename "$DOTENV_BUILD_MATRIX_PATH" )
+BUILD_SYSTEM_CONFIG_DIR=$( dirname "$DOTENV_BUILD_MATRIX_PATH" )
+cd "$BUILD_SYSTEM_CONFIG_DIR"
+shift
+
+if [[ ! -f "$DOTENV_BUILD_MATRIX" ]]; then
+  echo -e "\n[\033[1;31mERROR\033[0m] '$0' dotenv file $DOTENV_BUILD_MATRIX is unreachable"
+  exit 1
+else
+  set -o allexport
+  source "$DOTENV_BUILD_MATRIX"
+  set +o allexport
+fi
+
 
 # ....Script command line flags..................................................................
 while [ $# -gt 0 ]; do
@@ -174,10 +192,10 @@ while [ $# -gt 0 ]; do
         - ${MSG_DIMMED_FORMAT}NBS_MATRIX_CMAKE_BUILD_TYPE=(${NBS_MATRIX_CMAKE_BUILD_TYPE_SITREP[*]})${MSG_END_FORMAT}
         - ${MSG_DIMMED_FORMAT}NBS_MATRIX_UBUNTU_SUPPORTED_VERSIONS=(${NBS_MATRIX_UBUNTU_SUPPORTED_VERSIONS_SITREP[*]})${MSG_END_FORMAT}"
     ;;
-  -h | --help)
-    print_help_in_terminal
-    exit
-    ;;
+#  -h | --help)
+#    print_help_in_terminal
+#    exit
+#    ;;
   --) # no more option
     shift
     DOCKER_COMPOSE_CMD_ARGS="$*"

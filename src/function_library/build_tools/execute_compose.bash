@@ -41,23 +41,9 @@ function nbs::execute_compose() {
   # ....Project root logic.........................................................................
   local TMP_CWD=$(pwd)
 
-  ### ....Load environment variables from file.....................................................
-  ##set -o allexport
-  ##source .env
-  ##set +o allexport
-  #
-  ## ....path resolution logic.....................................................................
-  ##_PATH_TO_SCRIPT="$(realpath "${BASH_SOURCE[0]}")"
-  ##NBS_ROOT_DIR="$(dirname "${_PATH_TO_SCRIPT}")/../.."
-  #NBS_PATH=$(git rev-parse --show-toplevel)
-  #
-  ## ....Helper function...........................................................................
-  ## import shell functions from utilities library
-  #source "${NBS_PATH}/build_system/utilities/norlab-shell-script-tools/import_norlab_shell_script_tools_lib.bash"
-
   function nbs::print_help_in_terminal() {
     echo -e "\n
-  \$ nbs::execute_compose [<optional flag>] [-- <any docker cmd+arg>]
+  \$ nbs::execute_compose <docker-compose.yaml> [<optional flag>] [-- <any docker cmd+arg>]
     \033[1m
       <optional argument>:\033[0m
         -h, --help                              Get help
@@ -94,14 +80,25 @@ function nbs::execute_compose() {
     norlab_splash "${NBS_SPLASH_NAME_BUILD_SYSTEM}" "https://github.com/${NBS_REPOSITORY_DOMAIN}/${NBS_REPOSITORY_NAME}"
   fi
 
+  print_formated_script_header 'nbs::execute_compose' "${NBS_LINE_CHAR_BUILDER_LVL2}"
+
+  # ....Script command line flags (help case)......................................................
+  while [ $# -gt 0 ]; do
+
+    case $1 in
+    -h | --help)
+      nbs::print_help_in_terminal
+      exit
+      ;;
+    *) # Default case
+      break
+      ;;
+    esac
+
+  done
+
   _COMPOSE_FILE="${1:?'Missing the docker-compose.yaml file mandatory argument'}"
   shift # Remove argument value
-
-  if [[ ! -f ${_COMPOSE_FILE} ]]; then
-    print_msg_error_and_exit "'nbs::execute_compose' docker-compose file ${_COMPOSE_FILE} is unreachable"
-  fi
-
-  print_formated_script_header 'nbs::execute_compose' "${NBS_LINE_CHAR_BUILDER_LVL2}"
 
   # ....Script command line flags..................................................................
   while [ $# -gt 0 ]; do
@@ -137,10 +134,6 @@ function nbs::execute_compose() {
       set -e
       shift # Remove argument (--fail-fast)
       ;;
-    -h | --help)
-      nbs::print_help_in_terminal
-      exit
-      ;;
     --) # no more option
       shift
       DOCKER_COMPOSE_CMD_ARGS="$*"
@@ -152,6 +145,10 @@ function nbs::execute_compose() {
     esac
 
   done
+
+  if [[ ! -f ${_COMPOSE_FILE} ]]; then
+    print_msg_error_and_exit "'nbs::execute_compose' docker-compose file ${_COMPOSE_FILE} is unreachable"
+  fi
 
   # ...............................................................................................
   # Note: REPOSITORY_VERSION will be used to fetch the repo at release tag (ref task NMO-252)

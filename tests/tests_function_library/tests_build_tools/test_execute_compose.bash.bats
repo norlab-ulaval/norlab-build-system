@@ -34,8 +34,9 @@ fi
 
 # ====Setup========================================================================================
 
-TESTED_FILE="nbs_execute_compose_over_build_matrix.bash"
-TESTED_FILE_PATH="./src/utility_scripts/"
+TESTED_FILE="execute_compose.bash"
+TESTED_FILE_PATH="./src/function_library/build_tools"
+TESTED_FCT="nbs::execute_compose"
 
 # executed once before starting the first test (valide for all test in that file)
 setup_file() {
@@ -48,14 +49,8 @@ setup_file() {
 
 # executed before each test
 setup() {
-  set -o allexport
-  source "${SRC_CODE_PATH}"/build_system_templates/.env
-  set +o allexport
-
-  cd "${SRC_CODE_PATH}"
   source import_norlab_build_system_lib.bash
-
-  cd "$TESTED_FILE_PATH" || exit
+  cd "${SRC_CODE_PATH}/$TESTED_FILE_PATH" || exit
 }
 
 # ====Teardown=====================================================================================
@@ -71,36 +66,40 @@ teardown() {
 
 # ====Test casses==================================================================================
 
-@test "${TESTED_FILE} › dependencies image › execute ok › expect pass" {
+@test "nbs_execute_compose_over_build_matrix.bash › dependencies image › execute ok › expect pass" {
 #  skip "tmp mute" # ToDo: on task end >> delete this line ←
-
   DOTENV_BUILD_MATRIX="${SRC_CODE_PATH}"/build_system_templates/.env.build_matrix.dependencies.template
 
-  run bash "${TESTED_FILE}" "${DOTENV_BUILD_MATRIX}" --fail-fast -- build
+  cd "${SRC_CODE_PATH}/src/utility_scripts/" || exit
+
+  run bash "nbs_execute_compose_over_build_matrix.bash" "${DOTENV_BUILD_MATRIX}" --fail-fast -- build
   assert_success
-  assert_output --regexp "=========".*"Starting".*"${TESTED_FILE}".*"[NBS]".*"Build images specified in".*"'docker-compose.dependencies.yaml'".*"following".*".env.build_matrix"
-  assert_output --regexp "Status of tag crawled:".*"Pass".*"› latest-ubuntu-bionic".*"Pass".*"› latest-ubuntu-focal".*"Completed".*"${TESTED_FILE}".*"========="
+  assert_output --regexp "=========".*"Starting".*"nbs_execute_compose_over_build_matrix.bash".*"[NBS]".*"Build images specified in".*"'docker-compose.dependencies.yaml'".*"following".*".env.build_matrix"
+  assert_output --regexp "Status of tag crawled:".*"Pass".*"› latest-ubuntu-bionic".*"Pass".*"› latest-ubuntu-focal".*"Completed".*"nbs_execute_compose_over_build_matrix.bash".*"========="
 }
 
-@test "${TESTED_FILE} › project-core image › execute ok › expect pass" {
+
+@test "${TESTED_FILE} › function ${TESTED_FCT} › --help › execute ok › expect pass" {
 #  skip "tmp mute" # ToDo: on task end >> delete this line ←
 
-  DOTENV_BUILD_MATRIX="${SRC_CODE_PATH}"/build_system_templates/.env.build_matrix.project.template
+  run ${TESTED_FCT} --help
 
-  run bash "${TESTED_FILE}" "${DOTENV_BUILD_MATRIX}" --fail-fast -- build
   assert_success
-  assert_output --regexp "=========".*"Starting".*"${TESTED_FILE}".*"[NBS]".*"Build images specified in".*"'docker-compose.project_core.yaml'".*"following".*".env.build_matrix"
-  assert_output --regexp "Status of tag crawled:".*"Pass".*"› latest-ubuntu-bionic Compile mode: Release".*"Pass".*"› latest-ubuntu-bionic Compile mode: RelWithDebInfo".*"Pass".*"› latest-ubuntu-bionic Compile mode: MinSizeRel".*"Pass".*"› latest-ubuntu-focal Compile mode: Release".*"Pass".*"› latest-ubuntu-focal Compile mode: RelWithDebInfo".*"Pass".*"› latest-ubuntu-focal Compile mode: MinSizeRel".*"Pass".*"› latest-ubuntu-jammy Compile mode: Release".*"Pass".*"› latest-ubuntu-jammy Compile mode: RelWithDebInfo".*"Pass".*"› latest-ubuntu-jammy Compile mode: MinSizeRel".*"Completed".*"${TESTED_FILE}".*"========="
+  assert_output --regexp "=========".*"Starting".*"${TESTED_FCT}".*"\$".*"${TESTED_FCT}".*"<docker-compose.yaml>".*"[<optional flag>]".*"[".*"<any docker cmd+arg>]"
 }
 
-@test "${TESTED_FILE} › --help › execute ok › expect pass" {
+@test "${TESTED_FILE} › function ${TESTED_FCT} › execute ok › expect pass" {
 #  skip "tmp mute" # ToDo: on task end >> delete this line ←
 
-  DOTENV_BUILD_MATRIX="${SRC_CODE_PATH}"/build_system_templates/.env.build_matrix.project.template
+  PATH_TO_DOCKERFILE="${SRC_CODE_PATH}"/build_system_templates/nbs_container/project-dependencies/Dockerfile.dependencies
 
-  run bash "${TESTED_FILE}" --help
+  run nbs::execute_compose "$PATH_TO_DOCKERFILE"
+
   assert_success
-  assert_output --regexp "=========".*"Starting".*"${TESTED_FILE}".*"\$".*"${TESTED_FILE}".*"<.env.build_matrix.*>".*"[<optional flag>]".*"[".*"<any docker cmd+arg>]"
+  assert_output --regexp "=========".*"Starting".*"${TESTED_FCT}".*"[NBS]".*"Environment variables set for compose:".*"REPOSITORY_VERSION=latest".*"CMAKE_BUILD_TYPE=RelWithDebInfo".*"DEPENDENCIES_BASE_IMAGE=ubuntu".*"DEPENDENCIES_BASE_IMAGE_TAG=focal"
+
+  assert_output --regexp "[NBS]".*"Environment variables used by compose:".*"REPOSITORY_VERSION=latest".*"CMAKE_BUILD_TYPE=RelWithDebInfo".*"DEPENDENCIES_BASE_IMAGE=ubuntu".*"DEPENDENCIES_BASE_IMAGE_TAG=focal".*"Completed".*"${TESTED_FCT}".*"=========".*
+#  fail ""
 }
 
 # ToDo: implement >> test for IS_TEAMCITY_RUN==true casses

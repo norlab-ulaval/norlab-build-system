@@ -16,6 +16,7 @@ DOTENV_BUILD_MATRIX=${LPM_ROOT_DIR}/../../build_system_templates/.env.build_matr
 
 #export BUILDKIT_PROGRESS=plain # ToDo: on dev task end >> mute this line ←
 
+unset FLAGS
 declare -a FLAGS
 #FLAGS+=( --no-cache )
 #FLAGS+=( --dry-run )

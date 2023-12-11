@@ -2,7 +2,7 @@ services:
 
   # ====Dependency related services================================================================
   dependencies:
-    image: ${NBS_DOCKERHUB_NAMESPACE:?err}/${NBS_REPOSITORY_NAME}-dependencies:${NBS_IMAGE_TAG:?err}
+    image: ${NBS_DOCKERHUB_NAMESPACE:?err}/${NBS_REPOSITORY_NAME:?err}-dependencies:${NBS_IMAGE_TAG:?err}
     build:
       target: dependencies
       context: ..
@@ -10,7 +10,7 @@ services:
       dockerfile: ${NBS_SUPERPROJECT_BUILD_SYSTEM_DIR:?err}/nbs_container/project-dependencies/Dockerfile.dependencies
       platforms:
        - "linux/amd64"
-       - "linux/arm64/v8"
+       - "linux/arm64"
       args:
         BASE_IMAGE: ${DEPENDENCIES_BASE_IMAGE:?err}
         BASE_IMAGE_TAG: ${DEPENDENCIES_BASE_IMAGE_TAG:?err}

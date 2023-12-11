@@ -16,14 +16,19 @@ DOTENV_BUILD_MATRIX=${LPM_ROOT_DIR}/../../build_system_templates/.env.build_matr
 
 #export BUILDKIT_PROGRESS=plain # ToDo: on dev task end >> mute this line ←
 
+unset FLAGS
 declare -a FLAGS
 #FLAGS+=( --no-cache )
 #FLAGS+=( --dry-run )
+FLAGS+=( --push )  # Note: work when using buildx docker-container
 #FLAGS+=( dependencies )
 
 bash nbs_execute_compose_over_build_matrix.bash "${DOTENV_BUILD_MATRIX}" --fail-fast -- build "${FLAGS[@]}"
 
-FLAGS=( )
+## Note: Logic required when using default docker builder (not required when using buildx docker-container)
+#unset FLAGS
+#declare -a FLAGS
 #FLAGS+=( --dry-run )
+#
+#bash nbs_execute_compose_over_build_matrix.bash "${DOTENV_BUILD_MATRIX}" --fail-fast -- push "${FLAGS[@]}"
 
-bash nbs_execute_compose_over_build_matrix.bash "${DOTENV_BUILD_MATRIX}" --fail-fast -- push "${FLAGS[@]}"

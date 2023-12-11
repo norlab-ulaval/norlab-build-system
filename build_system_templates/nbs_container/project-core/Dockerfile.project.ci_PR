@@ -1,7 +1,7 @@
 ARG PROJECT_HUB=norlabulaval
-ARG BASE_IMAGE=libpointmatcher-dependencies
+ARG BASE_IMAGE
 ARG BASE_IMAGE_TAG
-FROM ${PROJECT_HUB}/${BASE_IMAGE}:${BASE_IMAGE_TAG:?err} AS libpointmatcher-dependencies
+FROM ${PROJECT_HUB}/${BASE_IMAGE:?err}:${BASE_IMAGE_TAG:?err} AS project-core
 
 LABEL org.opencontainers.image.authors="luc.coupal.1@ulaval.ca"
 
@@ -29,13 +29,13 @@ ARG DEBIAN_FRONTEND=noninteractive
 # ToDo: validate
 ENV TERM=${TERM:-"xterm-256color"}
 
-# ====Checkout libpointmatcher repository==========================================================
+# ====Checkout repository==========================================================================
 WORKDIR "${NBS_LIB_INSTALL_PATH}/${NBS_REPOSITORY_NAME}"
 
 # Copy all files from the checkout branch in the repository (except those in the .dockerignore)
 COPY . .
 
-# ====Check Libpointmatcher dependencies installed versions========================================
+# ====Check dependencies installed versions========================================================
 WORKDIR "${NBS_LIB_INSTALL_PATH}/${NBS_REPOSITORY_NAME}/${NBS_SUPERPROJECT_BUILD_SYSTEM_DIR}"
 
 RUN chmod +x ./nbs_container/project-core/entrypoint.bash

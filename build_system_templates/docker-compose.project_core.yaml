@@ -5,7 +5,7 @@ services:
 
   # ====Pull-request related services==============================================================
   ci_PR:
-    image: ${NBS_DOCKERHUB_NAMESPACE:?err}/${NBS_REPOSITORY_NAME}-ci-pr:${NBS_IMAGE_TAG:?err}
+    image: ${NBS_DOCKERHUB_NAMESPACE:?err}/${NBS_REPOSITORY_NAME:?err}-ci-pr:${NBS_IMAGE_TAG:?err}
     pull_policy: build
     build:
       context: ..
@@ -34,7 +34,7 @@ services:
     extends: ci_PR
     build:
       platforms:
-        - "linux/arm64/v8"
+        - "linux/arm64"
 
 #  # ====Dockerhub release image====================================================================
 #  release:
