@@ -80,7 +80,7 @@ function nbs::execute_compose() {
     norlab_splash "${NBS_SPLASH_NAME_BUILD_SYSTEM}" "https://github.com/${NBS_REPOSITORY_DOMAIN}/${NBS_REPOSITORY_NAME}"
   fi
 
-  print_formated_script_header 'nbs::execute_compose' "${NBS_LINE_CHAR_BUILDER_LVL2}"
+  print_formated_script_header 'nbs::execute_compose' "${MSG_LINE_CHAR_BUILDER_LVL2}"
 
   # ....Script command line flags (help case)......................................................
   while [ $# -gt 0 ]; do
@@ -183,7 +183,7 @@ function nbs::execute_compose() {
   ${MSG_DIMMED_FORMAT}    DEPENDENCIES_BASE_IMAGE=${DEPENDENCIES_BASE_IMAGE} ${MSG_END_FORMAT}
   ${MSG_DIMMED_FORMAT}    DEPENDENCIES_BASE_IMAGE_TAG=${DEPENDENCIES_BASE_IMAGE_TAG} ${MSG_END_FORMAT}"
 
-  print_formated_script_footer 'nbs::execute_compose' "${NBS_LINE_CHAR_BUILDER_LVL2}"
+  print_formated_script_footer 'nbs::execute_compose' "${MSG_LINE_CHAR_BUILDER_LVL2}"
   # ====Teardown===================================================================================
   cd "${TMP_CWD}"
 }
