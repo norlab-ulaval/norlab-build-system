@@ -71,7 +71,7 @@ teardown() {
 
 # ====Test casses==================================================================================
 
-@test "${TESTED_FILE} › execute ok › expect pass" {
+@test "${TESTED_FILE} › dependencies image › execute ok › expect pass" {
 
   DOTENV_BUILD_MATRIX="${SRC_CODE_PATH}"/build_system_templates/.env.build_matrix.dependencies.template
 
@@ -79,6 +79,16 @@ teardown() {
   assert_success
   assert_output --regexp "=========".*"Starting".*"${TESTED_FILE}".*"[NBS]".*"Build images specified in".*"'docker-compose.dependencies.yaml'".*"following".*".env.build_matrix"
   assert_output --regexp "Status of tag crawled:".*"Pass".*"› latest-ubuntu-bionic".*"Pass".*"› latest-ubuntu-focal".*"Completed".*"${TESTED_FILE}".*"========="
+}
+
+@test "${TESTED_FILE} › project-core image › execute ok › expect pass" {
+
+  DOTENV_BUILD_MATRIX="${SRC_CODE_PATH}"/build_system_templates/.env.build_matrix.project.template
+
+  run bash "${TESTED_FILE}" "${DOTENV_BUILD_MATRIX}" --fail-fast -- build >&3
+  assert_success
+  assert_output --regexp "=========".*"Starting".*"${TESTED_FILE}".*"[NBS]".*"Build images specified in".*"'docker-compose.project_core.yaml'".*"following".*".env.build_matrix"
+  assert_output --regexp "Status of tag crawled:".*"Pass".*"› latest-ubuntu-bionic Compile mode: Release".*"Pass".*"› latest-ubuntu-bionic Compile mode: RelWithDebInfo".*"Pass".*"› latest-ubuntu-bionic Compile mode: MinSizeRel".*"Pass".*"› latest-ubuntu-focal Compile mode: Release".*"Pass".*"› latest-ubuntu-focal Compile mode: RelWithDebInfo".*"Pass".*"› latest-ubuntu-focal Compile mode: MinSizeRel".*"Pass".*"› latest-ubuntu-jammy Compile mode: Release".*"Pass".*"› latest-ubuntu-jammy Compile mode: RelWithDebInfo".*"Pass".*"› latest-ubuntu-jammy Compile mode: MinSizeRel".*"Completed".*"${TESTED_FILE}".*"========="
 }
 
 # ToDo: implement >> test for IS_TEAMCITY_RUN==true casses

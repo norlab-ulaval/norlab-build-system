@@ -8,9 +8,9 @@ services:
       context: ..
       # (Priority) ToDo: change path to dockerfile
       dockerfile: ${NBS_SUPERPROJECT_BUILD_SYSTEM_DIR:?err}/nbs_container/project-dependencies/Dockerfile.dependencies
-      # platforms:
-      #   - "linux/amd64"
-      #   - "linux/arm64/v8"
+       platforms:
+         - "linux/amd64"
+         - "linux/arm64/v8"
       args:
         BASE_IMAGE: ${DEPENDENCIES_BASE_IMAGE:?err}
         BASE_IMAGE_TAG: ${DEPENDENCIES_BASE_IMAGE_TAG:?err}
