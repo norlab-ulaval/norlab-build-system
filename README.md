@@ -121,17 +121,17 @@ This should solve the problem permanently.
 
 ---
 # NBS caracteristics
-- build infrastructure agnostic
-- can be used locally or on any build infrastructure e.g. _TeamCity_, _GitHub workflow_ 
-- support _**TeamCity**_ log via `teamcity_service_msg_*`
+- **build infrastructure agnostic**: can be used locally or on any build infrastructure e.g. _TeamCity_, _GitHub workflow_ 
+- support _**TeamCity**_ log via _teamcity service messages_: collapsable bloc, build tag, slack notifications ...
+- **build/test isolation** using a _**Docker container**_ 
 - portable
   - multi OS support (Ubuntu and OsX)
-  - minimal dependencies: `docker`, `docker compose`, `docker buildx`
+  - minimal dependencies: `docker`, `docker compose` and `docker buildx` for multi-architecture build
 - simple to use
   - configuration through `.env` and `.env.build_matrix` files
   - convenient build script
   - convenient install script
-- easy to update via git submodule
+- easy to update via _**git submodule**_
 
 # NBS main usage
 Note: Execute `cd src/utility_scripts && bash nbs_execute_compose_over_build_matrix.bash --help` for more details.
