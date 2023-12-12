@@ -21,10 +21,14 @@
 (VPN or intranet access) &nbsp; • &nbsp;  
 <a href="https://hub.docker.com/repositories/norlabulaval">norlabulaval</a>
 (Docker Hub) &nbsp;
+<small>
+
+Maintainer: [Luc Coupal](https://redleader962.github.io)
+
+</small>
 </sup>
 </p>  
 
-Maintainer: [Luc Coupal](https://redleader962.github.io)
 
 **`NBS` is a build-infrastructure-agnostic build system custom-made to meet our need in robotic software engineering at NorLab.**
 
