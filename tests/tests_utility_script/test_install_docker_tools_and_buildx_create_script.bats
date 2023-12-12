@@ -34,8 +34,9 @@ fi
 
 # ====Setup========================================================================================
 
-TESTED_FILE="import_norlab_build_system_lib.bash"
-TESTED_FILE_PATH="./"
+TESTED_FILE="nbs_install_docker_tools.bash"
+TESTED_FILE2="nbs_create_multiarch_docker_builder.bash"
+TESTED_FILE_PATH="./install_scripts"
 
 # executed once before starting the first test (valide for all test in that file)
 setup_file() {
@@ -64,39 +65,20 @@ teardown() {
 
 # ====Test casses==================================================================================
 
-@test "${TESTED_FILE} › set environment variable check › expect pass" {
-  assert_empty "${_PATH_TO_SCRIPT}"
-  assert_empty "${NBS_PATH}"
-  assert_empty "${NBS_TMP_TEST_LIB_SOURCING_ENV_EXPORT}"
+@test "run $TESTED_FILE from root › expect pass" {
+  cd "${BATS_DOCKER_WORKDIR}"
 
-  source "${SRC_CODE_PATH}/$TESTED_FILE"
-#  run printenv >&3
-  run printenv
-  assert_not_empty "${_PATH_TO_SCRIPT}"
-  assert_not_empty "${NBS_PATH}"
-  assert_not_empty "${NBS_TMP_TEST_LIB_SOURCING_ENV_EXPORT}"
+  run bash ./install_scripts/$TESTED_FILE
   assert_success
-  assert_output --partial "NBS_TMP_TEST_LIB_SOURCING_ENV_EXPORT=Goooooooood morning NorLab"
-#  unset NBS_TMP_TEST_LIB_SOURCING_ENV_EXPORT
+  run docker --version
+  assert_output --regexp  "Docker version".*"build".*
 }
 
-@test "${TESTED_FILE} › import function check › expect pass" {
+@test "run $TESTED_FILE2 (mock 'docker buildx create' step) › expect pass" {
+  cd "${BATS_DOCKER_WORKDIR}"
 
-  source "${SRC_CODE_PATH}/$TESTED_FILE"
+  mock_docker_command_exit_ok
 
-  assert_empty "${NBS_TMP_TEST_LIB_SOURCING_FUNC}"
-  nbs::test_export_fct
-  assert_not_empty "${NBS_TMP_TEST_LIB_SOURCING_FUNC}"
-
-#  run printenv >&3
-  run printenv
+  run source ./install_scripts/$TESTED_FILE2
   assert_success
-  assert_output --partial "NBS_TMP_TEST_LIB_SOURCING_FUNC=Let it SNOW"
-}
-
-@test "validate env var are not set between test run" {
-  assert_empty "${_PATH_TO_SCRIPT}"
-  assert_empty "${NBS_PATH}"
-  assert_empty "${NBS_TMP_TEST_LIB_SOURCING_ENV_EXPORT}"
-#  fail "›››› Temp" # (CRITICAL) ToDo: on task end >> delete this line ←
 }
