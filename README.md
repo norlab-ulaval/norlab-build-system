@@ -190,14 +190,14 @@ bash nbs_execute_compose_over_build_matrix.bash \
                       --fail-fast \
                       -- build --dry-run
 ```
-with `.env.build_matrix.dependencies` defining a build matrix `[latest] x [None] x [ubuntu] x [focal, jammy]`,
+with `.env.build_matrix.project` defining a build matrix `[latest] x [ubuntu] x [focal, jammy] x [Release, MinSizeRel]`,
 will result in the following 
 
-![](visual/NBS_dryrun_1.jpg)
-![](visual/NBS_dryrun_2.jpg)
+![](visual/NBS_dryrun_v2_1.jpg)
+![](visual/NBS_dryrun_v2_2.jpg)
 
 In TeamCity, with NBS support for `##teamcity[blockOpened` and `##teamcityblockClosed` service messages, 
-a larger build matrix such as `[latest] x [Release, RelWithDebInfo, MinSizeRel] x [ubuntu] x [bionic, focal, jammy]`
+a larger build matrix such as `[latest] x [ubuntu] x [bionic, focal, jammy] x [Release, RelWithDebInfo, MinSizeRel]`
 will result in the following:
 
 Note: [-] and [+] are collapsible row

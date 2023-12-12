@@ -196,7 +196,7 @@ done
 
 
 # ................................................................................................
-print_msg "Build images specified in ${MSG_DIMMED_FORMAT}'${NBS_EXECUTE_BUILD_MATRIX_OVER_COMPOSE_FILE:?'Environment variable is not set'}'${MSG_END_FORMAT} following ${MSG_DIMMED_FORMAT}.env.build_matrix${MSG_END_FORMAT}"
+print_msg "Build images specified in ${MSG_DIMMED_FORMAT}'${NBS_EXECUTE_BUILD_MATRIX_OVER_COMPOSE_FILE:?'Environment variable is not set'}'${MSG_END_FORMAT} following ${MSG_DIMMED_FORMAT}${DOTENV_BUILD_MATRIX}${MSG_END_FORMAT}"
 
 # Freeze build matrix env variable to prevent accidental override
 # Note: declare -r ==> set as read-only, declare -a  ==> set as an array
