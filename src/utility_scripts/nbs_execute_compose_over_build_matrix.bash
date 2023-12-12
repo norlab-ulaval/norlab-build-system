@@ -29,8 +29,6 @@
 #                                     pass them in the docker-compose.yaml if you experience problem.
 #   [--docker-debug-logs]       Set Docker builder log output for debug (i.e.BUILDKIT_PROGRESS=plain)
 #   [--fail-fast]               Exit script at first encountered error
-#   [--ci-sitrep-run]           Override NBS_MATRIX_CMAKE_BUILD_TYPE and
-#                                 NBS_MATRIX_UBUNTU_SUPPORTED_VERSIONS with there respective _SITREP version
 #   [-h, --help]                Get help
 #
 # Note:
@@ -90,8 +88,6 @@ function print_help_in_terminal() {
       --docker-debug-logs
                           Set Docker builder log output for debug (i.e.BUILDKIT_PROGRESS=plain)
       --fail-fast         Exit script at first encountered error
-      --ci-sitrep-run     Override NBS_MATRIX_CMAKE_BUILD_TYPE and
-                            NBS_MATRIX_UBUNTU_SUPPORTED_VERSIONS with there respective _SITREP version
 
   \033[1m
     [-- <any docker cmd+arg>]\033[0m                 Any argument passed after '--' will be passed to docker compose as docker
@@ -181,16 +177,6 @@ while [ $# -gt 0 ]; do
   --fail-fast)
     set -e
     shift # Remove argument (--fail-fast)
-    ;;
-  --ci-sitrep-run)
-    shift # Remove argument (--ci-sitrep-run)
-    unset NBS_MATRIX_CMAKE_BUILD_TYPE
-    unset NBS_MATRIX_UBUNTU_SUPPORTED_VERSIONS
-    NBS_MATRIX_CMAKE_BUILD_TYPE=("${NBS_MATRIX_CMAKE_BUILD_TYPE_SITREP[@]}")
-    NBS_MATRIX_UBUNTU_SUPPORTED_VERSIONS=("${NBS_MATRIX_UBUNTU_SUPPORTED_VERSIONS_SITREP[@]}")
-    print_msg "${MSG_DIMMED_FORMAT}ci-sitrep${MSG_END_FORMAT} run environment variable override:
-        - ${MSG_DIMMED_FORMAT}NBS_MATRIX_CMAKE_BUILD_TYPE=(${NBS_MATRIX_CMAKE_BUILD_TYPE_SITREP[*]})${MSG_END_FORMAT}
-        - ${MSG_DIMMED_FORMAT}NBS_MATRIX_UBUNTU_SUPPORTED_VERSIONS=(${NBS_MATRIX_UBUNTU_SUPPORTED_VERSIONS_SITREP[*]})${MSG_END_FORMAT}"
     ;;
 #  -h | --help)
 #    print_help_in_terminal
