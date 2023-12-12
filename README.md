@@ -35,7 +35,7 @@ Maintainer: [Luc Coupal](https://redleader962.github.io)
 <br>
 
 #### `v0.2.1` release notes:
-- Be advised, this a beta release and we might introduce API breaking change without notice. 
+- Be advised, this is a beta release and we might introduce API breaking change without notice. 
 - This version is used in `libpointmatcher-build-system` and `libnabo-build-system` 
 - We are currently refactoring out the `dockerized-norlab` build-system logic to `norlab-build-system` for release `v1.0.0`. Stay tuned for the first stable release. 
 
