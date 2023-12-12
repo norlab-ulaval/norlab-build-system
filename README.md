@@ -24,14 +24,13 @@
 </sup>
 </p>  
 
-**`NBS` is a build-infrastructure-agnostic build system custom-made to meet our need in robotic software engineering at NorLab.**
-
 Maintainer: [Luc Coupal](https://redleader962.github.io)
+
+**`NBS` is a build-infrastructure-agnostic build system custom-made to meet our need in robotic software engineering at NorLab.**
 
 </div>
 
-
-
+<br>
 
 #### `v0.2.1` release notes:
 - Be advised, this a beta release and we might introduce API breaking change without notice. 
