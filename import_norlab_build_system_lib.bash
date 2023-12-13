@@ -7,7 +7,6 @@
 #   $ source import_norlab_build_system_lib.bash
 #
 
-MSG_DIMMED_FORMAT="\033[1;2m"
 MSG_ERROR_FORMAT="\033[1;31m"
 MSG_END_FORMAT="\033[0m"
 
@@ -57,7 +56,8 @@ function nbs::source_lib(){
 
 if [[ "${BASH_SOURCE[0]}" = "$0" ]]; then
   # This script is being run, ie: __name__="__main__"
-  echo "${MSG_ERROR_FORMAT}[ERROR]${MSG_END_FORMAT} This script must be sourced from an other script"
+  echo -e "${MSG_ERROR_FORMAT}[ERROR]${MSG_END_FORMAT} This script must be sourced i.e.: $ source $( basename "$0" )" 1>&2
+  exit 1
 else
   # This script is being sourced, ie: __name__="__source__"
   nbs::source_lib
