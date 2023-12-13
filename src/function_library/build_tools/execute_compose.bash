@@ -134,6 +134,10 @@ function nbs::execute_compose() {
       set -e
       shift # Remove argument (--fail-fast)
       ;;
+    -h | --help)
+      nbs::print_help_in_terminal
+      exit
+      ;;
     --) # no more option
       shift
       DOCKER_COMPOSE_CMD_ARGS="$*"

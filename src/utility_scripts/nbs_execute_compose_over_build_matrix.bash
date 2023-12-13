@@ -178,10 +178,10 @@ while [ $# -gt 0 ]; do
     set -e
     shift # Remove argument (--fail-fast)
     ;;
-#  -h | --help)
-#    print_help_in_terminal
-#    exit
-#    ;;
+  -h | --help)
+    print_help_in_terminal
+    exit
+    ;;
   --) # no more option
     shift
     DOCKER_COMPOSE_CMD_ARGS="$*"
