@@ -56,7 +56,8 @@ function nbs::run_all_script_in_directory(){
 
 if [[ "${BASH_SOURCE[0]}" = "$0" ]]; then
   # This script is being run, ie: __name__="__main__"
-  echo "${MSG_ERROR_FORMAT}[ERROR]${MSG_END_FORMAT} This script must be sourced from an other script"
+  echo -e "${MSG_ERROR_FORMAT}[ERROR]${MSG_END_FORMAT} This script must be sourced i.e.: $ source $( basename "$0" )" 1>&2
+  exit 1
 else
   # This script is being sourced, ie: __name__="__source__"
   nbs::run_all_script_in_directory
