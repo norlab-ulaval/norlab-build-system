@@ -60,10 +60,10 @@ setup() {
 
 # ====Teardown=====================================================================================
 
-# executed after each test
-teardown() {
-  bats_print_run_env_variable_on_error
-}
+## executed after each test
+#teardown() {
+#  bats_print_run_env_variable_on_error
+#}
 
 ## executed once after finishing the last test (valide for all test in that file)
 #teardown_file() {
@@ -95,15 +95,28 @@ teardown() {
   assert_output --regexp "Status of tag crawled:".*"Pass".*"› latest-ubuntu-bionic Compile mode: Release".*"Pass".*"› latest-ubuntu-bionic Compile mode: RelWithDebInfo".*"Pass".*"› latest-ubuntu-bionic Compile mode: MinSizeRel".*"Pass".*"› latest-ubuntu-focal Compile mode: Release".*"Pass".*"› latest-ubuntu-focal Compile mode: RelWithDebInfo".*"Pass".*"› latest-ubuntu-focal Compile mode: MinSizeRel".*"Pass".*"› latest-ubuntu-jammy Compile mode: Release".*"Pass".*"› latest-ubuntu-jammy Compile mode: RelWithDebInfo".*"Pass".*"› latest-ubuntu-jammy Compile mode: MinSizeRel".*"Completed".*"${TESTED_FILE}".*
 }
 
-@test "${TESTED_FILE} › --help › execute ok › expect pass" {
+@test "${TESTED_FILE} › --help as first argument › execute ok › expect pass" {
 #  skip "tmp mute" # ToDo: on task end >> delete this line ←
 
   DOTENV_BUILD_MATRIX="${SRC_CODE_PATH}"/build_system_templates/.env.build_matrix.project.template
   DOTENV_BUILD_MATRIX_NAME=$( basename "${DOTENV_BUILD_MATRIX}" )
 
-  run bash "${TESTED_FILE}" --help
+  run bash "${TESTED_FILE}" --help "$DOTENV_BUILD_MATRIX"
   assert_success
-  assert_output --regexp .*"Starting".*"${TESTED_FILE}".*"\$".*"${TESTED_FILE}".*"<.env.build_matrix.*>".*"[<optional flag>]".*"[".*"<any docker cmd+arg>]"
+  assert_output --regexp .*"Starting".*"${TESTED_FILE}".*"\$".*"${TESTED_FILE}".*"<.env.build_matrix.*>".*"[<optional flag>]".*"[".*"<any docker cmd+arg>]".*"<optional argument>:".*"-h, --help".*"--docker-debug-logs".*"--fail-fast"
+  refute_output --regexp .*"Starting".*"${TESTED_FILE}".*"[NBS]".*"Build images specified in".*"'docker-compose.project_core.yaml'".*"following".*"${DOTENV_BUILD_MATRIX_NAME}"
+}
+
+@test "${TESTED_FILE} › first arg: dotenv, second arg: --help › execute ok › expect pass" {
+#  skip "tmp mute" # ToDo: on task end >> delete this line ←
+
+  DOTENV_BUILD_MATRIX="${SRC_CODE_PATH}"/build_system_templates/.env.build_matrix.project.template
+  DOTENV_BUILD_MATRIX_NAME=$( basename "${DOTENV_BUILD_MATRIX}" )
+
+  run bash "${TESTED_FILE}" "$DOTENV_BUILD_MATRIX" --help
+  assert_success
+  assert_output --regexp .*"Starting".*"${TESTED_FILE}".*"\$".*"${TESTED_FILE}".*"<.env.build_matrix.*>".*"[<optional flag>]".*"[".*"<any docker cmd+arg>]".*"<optional argument>:".*"-h, --help".*"--docker-debug-logs".*"--fail-fast"
+  refute_output --regexp .*"Starting".*"${TESTED_FILE}".*"[NBS]".*"Build images specified in".*"'docker-compose.project_core.yaml'".*"following".*"${DOTENV_BUILD_MATRIX_NAME}"
 }
 
 # ToDo: implement >> test for IS_TEAMCITY_RUN==true casses
