@@ -27,22 +27,14 @@ Maintainer: [Luc Coupal](https://redleader962.github.io)
 </sup>
 </p>  
 
-
 **`NBS` is a build-infrastructure-agnostic build system custom-made to meet our need in robotic software engineering at NorLab.**
 
 </div>
 
 <br>
 
-#### `v0.2.1` release notes:
-- Be advised, this is a beta release and we might introduce API breaking change without notice. 
-- This version is used in `libpointmatcher-build-system` and `libnabo-build-system` 
-- We are currently refactoring out the `dockerized-norlab` build-system logic to `norlab-build-system` for release `v1.0.0`. Stay tuned for the first stable release. 
-
----
-
 <details>
-  <summary style="font-weight: bolder;font-size: large;">How to use this repository as a git submodule</summary>
+  <summary style="font-weight: bolder;font-size: large;"> Install instructions and git submodule usage notes </summary>
 
 Just clone the *norlab-build-system* as a submodule in your project repository (ie the
 _superproject_), in an arbitrary directory eg.: `my-project/build_system/utilities/`.
@@ -126,6 +118,16 @@ This should solve the problem permanently.
 </details>
 
 ---
+
+#### `v0.2.1` release notes:
+
+- Be advised, this is a beta release and we might introduce API breaking change without notice.
+- This version is used in `libpointmatcher-build-system` and `libnabo-build-system`
+- We are currently refactoring out the `dockerized-norlab` build-system logic
+  to `norlab-build-system` for release `v1.0.0`. Stay tuned for the first stable release.
+
+---
+
 # NBS caracteristics
 - **build infrastructure agnostic**: can be used locally or on any build infrastructure e.g. _TeamCity_, _GitHub workflow_ 
 - support _**TeamCity**_ log via _teamcity service messages_: collapsable bloc, build tag, slack notifications ...
