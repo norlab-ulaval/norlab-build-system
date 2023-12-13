@@ -14,5 +14,20 @@
 #   none
 # =================================================================================================
 
-# ToDo: refactor > use NS2T_PATH set somewhere
-bash ./utilities/norlab-shell-script-tools/tests/bats_testing_tools/run_bats_tests_in_docker.bash "$@"
+function nbs::run_n2st_testsing_tools(){
+  local TMP_CWD
+  TMP_CWD=$(pwd)
+
+  # ....Project root logic.........................................................................
+  NBS_PATH=$(git rev-parse --show-toplevel)
+  N2ST_PATH=${N2ST_PATH:-"./utilities/norlab-shell-script-tools"}
+
+  # ....Execute N2ST run_bats_tests_in_docker.bash.................................................
+  cd "$NBS_PATH"
+  bash "${N2ST_PATH}/tests/bats_testing_tools/run_bats_tests_in_docker.bash" "$@"
+
+  # ....Teardown...................................................................................
+  cd "$TMP_CWD"
+  }
+
+nbs::run_n2st_testsing_tools
