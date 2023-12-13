@@ -66,7 +66,42 @@ teardown() {
 
 # ====Test casses==================================================================================
 
-@test "nbs_execute_compose_over_build_matrix.bash › dependencies image › execute ok › expect pass" {
+@test "${TESTED_FILE} › function ${TESTED_FCT} › --help as first argument  › execute ok › expect pass" {
+#  skip "tmp mute" # ToDo: on task end >> delete this line ←
+  PATH_TO_DOCKERFILE="${SRC_CODE_PATH}"/build_system_templates/nbs_container/project-dependencies/Dockerfile.dependencies
+
+  run ${TESTED_FCT} --help "$PATH_TO_DOCKERFILE"
+
+  assert_success
+  assert_output --regexp .*"Starting".*"${TESTED_FCT}".*"\$".*"${TESTED_FCT}".*"<docker-compose.yaml>".*"[<optional flag>]".*"[".*"<any docker cmd+arg>]"
+  refute_output --regexp .*"Starting".*"nbs_execute_compose_over_build_matrix.bash".*"[NBS]".*"Build images specified in".*"'docker-compose.dependencies.yaml'".*"following".*".env.build_matrix"
+}
+
+@test "${TESTED_FILE} › function ${TESTED_FCT} › first arg: dotenv, second arg: --help  › execute ok › expect pass" {
+#  skip "tmp mute" # ToDo: on task end >> delete this line ←
+  PATH_TO_DOCKERFILE="${SRC_CODE_PATH}"/build_system_templates/nbs_container/project-dependencies/Dockerfile.dependencies
+
+  run ${TESTED_FCT} "$PATH_TO_DOCKERFILE" --help
+
+  assert_success
+  assert_output --regexp .*"Starting".*"${TESTED_FCT}".*"\$".*"${TESTED_FCT}".*"<docker-compose.yaml>".*"[<optional flag>]".*"[".*"<any docker cmd+arg>]"
+  refute_output --regexp .*"Starting".*"nbs_execute_compose_over_build_matrix.bash".*"[NBS]".*"Build images specified in".*"'docker-compose.dependencies.yaml'".*"following".*".env.build_matrix"
+}
+
+@test "${TESTED_FILE} › function ${TESTED_FCT} › execute ok › expect pass" {
+#  skip "tmp mute" # ToDo: on task end >> delete this line ←
+  PATH_TO_DOCKERFILE="${SRC_CODE_PATH}"/build_system_templates/nbs_container/project-dependencies/Dockerfile.dependencies
+
+  run nbs::execute_compose "$PATH_TO_DOCKERFILE"
+
+  assert_success
+  assert_output --regexp .*"Starting".*"${TESTED_FCT}".*"[NBS]".*"Environment variables set for compose:".*"REPOSITORY_VERSION=latest".*"CMAKE_BUILD_TYPE=RelWithDebInfo".*"DEPENDENCIES_BASE_IMAGE=ubuntu".*"DEPENDENCIES_BASE_IMAGE_TAG=focal"
+
+  assert_output --regexp "[NBS]".*"Environment variables used by compose:".*"REPOSITORY_VERSION=latest".*"CMAKE_BUILD_TYPE=RelWithDebInfo".*"DEPENDENCIES_BASE_IMAGE=ubuntu".*"DEPENDENCIES_BASE_IMAGE_TAG=focal".*"Completed".*"${TESTED_FCT}".*
+#  fail ""
+}
+
+@test "${TESTED_FILE} › function ${TESTED_FCT} › integration in nbs_execute_compose_over_build_matrix.bash › execute ok › expect pass" {
 #  skip "tmp mute" # ToDo: on task end >> delete this line ←
   DOTENV_BUILD_MATRIX="${SRC_CODE_PATH}"/build_system_templates/.env.build_matrix.dependencies.template
 
@@ -79,28 +114,6 @@ teardown() {
 }
 
 
-@test "${TESTED_FILE} › function ${TESTED_FCT} › --help › execute ok › expect pass" {
-#  skip "tmp mute" # ToDo: on task end >> delete this line ←
-
-  run ${TESTED_FCT} --help
-
-  assert_success
-  assert_output --regexp .*"Starting".*"${TESTED_FCT}".*"\$".*"${TESTED_FCT}".*"<docker-compose.yaml>".*"[<optional flag>]".*"[".*"<any docker cmd+arg>]"
-}
-
-@test "${TESTED_FILE} › function ${TESTED_FCT} › execute ok › expect pass" {
-#  skip "tmp mute" # ToDo: on task end >> delete this line ←
-
-  PATH_TO_DOCKERFILE="${SRC_CODE_PATH}"/build_system_templates/nbs_container/project-dependencies/Dockerfile.dependencies
-
-  run nbs::execute_compose "$PATH_TO_DOCKERFILE"
-
-  assert_success
-  assert_output --regexp .*"Starting".*"${TESTED_FCT}".*"[NBS]".*"Environment variables set for compose:".*"REPOSITORY_VERSION=latest".*"CMAKE_BUILD_TYPE=RelWithDebInfo".*"DEPENDENCIES_BASE_IMAGE=ubuntu".*"DEPENDENCIES_BASE_IMAGE_TAG=focal"
-
-  assert_output --regexp "[NBS]".*"Environment variables used by compose:".*"REPOSITORY_VERSION=latest".*"CMAKE_BUILD_TYPE=RelWithDebInfo".*"DEPENDENCIES_BASE_IMAGE=ubuntu".*"DEPENDENCIES_BASE_IMAGE_TAG=focal".*"Completed".*"${TESTED_FCT}".*
-#  fail ""
-}
 
 # ToDo: implement >> test for IS_TEAMCITY_RUN==true casses
 # (NICE TO HAVE) ToDo: implement >> test for python intsall casses with regard to distribution
