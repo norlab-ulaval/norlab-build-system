@@ -29,8 +29,6 @@
 #                                     pass them in the docker-compose.yaml if you experience problem.
 #   [--docker-debug-logs]       Set Docker builder log output for debug (i.e.BUILDKIT_PROGRESS=plain)
 #   [--fail-fast]               Exit script at first encountered error
-#   [--ci-sitrep-run]           Override NBS_MATRIX_CMAKE_BUILD_TYPE and
-#                                 NBS_MATRIX_UBUNTU_SUPPORTED_VERSIONS with there respective _SITREP version
 #   [-h, --help]                Get help
 #
 # Note:
@@ -52,11 +50,11 @@ fi
 # ....path resolution logic........................................................................
 # (CRITICAL) ToDo: add cwd check to make sure its executed with bash and from the container_tools dir
 _PATH_TO_SCRIPT="$(realpath "${BASH_SOURCE[0]}")"
-NBS_ROOT_DIR="$(dirname "${_PATH_TO_SCRIPT}")/../.."
+NBS_PATH="$(dirname "${_PATH_TO_SCRIPT}")/../.."
 
 # ....Helper function..............................................................................
 # import shell functions from utilities library
-source "${NBS_ROOT_DIR}/import_norlab_build_system_lib.bash"
+source "${NBS_PATH}/import_norlab_build_system_lib.bash"
 
 # ====Begin========================================================================================
 
@@ -90,8 +88,6 @@ function print_help_in_terminal() {
       --docker-debug-logs
                           Set Docker builder log output for debug (i.e.BUILDKIT_PROGRESS=plain)
       --fail-fast         Exit script at first encountered error
-      --ci-sitrep-run     Override NBS_MATRIX_CMAKE_BUILD_TYPE and
-                            NBS_MATRIX_UBUNTU_SUPPORTED_VERSIONS with there respective _SITREP version
 
   \033[1m
     [-- <any docker cmd+arg>]\033[0m                 Any argument passed after '--' will be passed to docker compose as docker
@@ -182,16 +178,6 @@ while [ $# -gt 0 ]; do
     set -e
     shift # Remove argument (--fail-fast)
     ;;
-  --ci-sitrep-run)
-    shift # Remove argument (--ci-sitrep-run)
-    unset NBS_MATRIX_CMAKE_BUILD_TYPE
-    unset NBS_MATRIX_UBUNTU_SUPPORTED_VERSIONS
-    NBS_MATRIX_CMAKE_BUILD_TYPE=("${NBS_MATRIX_CMAKE_BUILD_TYPE_SITREP[@]}")
-    NBS_MATRIX_UBUNTU_SUPPORTED_VERSIONS=("${NBS_MATRIX_UBUNTU_SUPPORTED_VERSIONS_SITREP[@]}")
-    print_msg "${MSG_DIMMED_FORMAT}ci-sitrep${MSG_END_FORMAT} run environment variable override:
-        - ${MSG_DIMMED_FORMAT}NBS_MATRIX_CMAKE_BUILD_TYPE=(${NBS_MATRIX_CMAKE_BUILD_TYPE_SITREP[*]})${MSG_END_FORMAT}
-        - ${MSG_DIMMED_FORMAT}NBS_MATRIX_UBUNTU_SUPPORTED_VERSIONS=(${NBS_MATRIX_UBUNTU_SUPPORTED_VERSIONS_SITREP[*]})${MSG_END_FORMAT}"
-    ;;
 #  -h | --help)
 #    print_help_in_terminal
 #    exit
@@ -210,7 +196,7 @@ done
 
 
 # ................................................................................................
-print_msg "Build images specified in ${MSG_DIMMED_FORMAT}'${NBS_EXECUTE_BUILD_MATRIX_OVER_COMPOSE_FILE:?'Environment variable is not set'}'${MSG_END_FORMAT} following ${MSG_DIMMED_FORMAT}.env.build_matrix${MSG_END_FORMAT}"
+print_msg "Build images specified in ${MSG_DIMMED_FORMAT}'${NBS_EXECUTE_BUILD_MATRIX_OVER_COMPOSE_FILE:?'Environment variable is not set'}'${MSG_END_FORMAT} following ${MSG_DIMMED_FORMAT}${DOTENV_BUILD_MATRIX}${MSG_END_FORMAT}"
 
 # Freeze build matrix env variable to prevent accidental override
 # Note: declare -r ==> set as read-only, declare -a  ==> set as an array
@@ -270,7 +256,7 @@ for EACH_REPO_VERSION in "${NBS_MATRIX_REPOSITORY_VERSIONS[@]}"; do
           echo " "
         fi
 
-#          source "${NBS_ROOT_DIR}"/src/build_scripts/nbs_execute_compose.bash ${NBS_EXECUTE_BUILD_MATRIX_OVER_COMPOSE_FILE} \
+#          source "${NBS_PATH}"/src/build_scripts/nbs_execute_compose.bash ${NBS_EXECUTE_BUILD_MATRIX_OVER_COMPOSE_FILE} \
 
         nbs::execute_compose ${NBS_EXECUTE_BUILD_MATRIX_OVER_COMPOSE_FILE} \
                               --repository-version "${EACH_REPO_VERSION}" \

@@ -35,7 +35,7 @@ Maintainer: [Luc Coupal](https://redleader962.github.io)
 <br>
 
 #### `v0.2.1` release notes:
-- Be advised, this a beta release and we might introduce API breaking change without notice. 
+- Be advised, this is a beta release and we might introduce API breaking change without notice. 
 - This version is used in `libpointmatcher-build-system` and `libnabo-build-system` 
 - We are currently refactoring out the `dockerized-norlab` build-system logic to `norlab-build-system` for release `v1.0.0`. Stay tuned for the first stable release. 
 
@@ -190,14 +190,14 @@ bash nbs_execute_compose_over_build_matrix.bash \
                       --fail-fast \
                       -- build --dry-run
 ```
-with `.env.build_matrix.dependencies` defining a build matrix `[latest] x [None] x [ubuntu] x [focal, jammy]`,
+with `.env.build_matrix.project` defining a build matrix `[latest] x [ubuntu] x [focal, jammy] x [Release, MinSizeRel]`,
 will result in the following 
 
-![](visual/NBS_dryrun_1.jpg)
-![](visual/NBS_dryrun_2.jpg)
+![](visual/NBS_dryrun_v2_1.jpg)
+![](visual/NBS_dryrun_v2_2.jpg)
 
 In TeamCity, with NBS support for `##teamcity[blockOpened` and `##teamcityblockClosed` service messages, 
-a larger build matrix such as `[latest] x [Release, RelWithDebInfo, MinSizeRel] x [ubuntu] x [bionic, focal, jammy]`
+a larger build matrix such as `[latest] x [ubuntu] x [bionic, focal, jammy] x [Release, RelWithDebInfo, MinSizeRel]`
 will result in the following:
 
 Note: [-] and [+] are collapsible row

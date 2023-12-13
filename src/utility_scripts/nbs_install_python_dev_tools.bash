@@ -18,11 +18,11 @@ fi
 # ....path resolution logic........................................................................
 # (CRITICAL) ToDo: add cwd check to make sure its executed with bash and from the container_tools dir
 _PATH_TO_SCRIPT="$(realpath "${BASH_SOURCE[0]}")"
-NBS_ROOT_DIR="$(dirname "${_PATH_TO_SCRIPT}")/../.."
+NBS_PATH="$(dirname "${_PATH_TO_SCRIPT}")/../.."
 
 # ....Helper function..............................................................................
 # import shell functions from utilities library
-source "${NBS_ROOT_DIR}/import_norlab_build_system_lib.bash"
+source "${NBS_PATH}/import_norlab_build_system_lib.bash"
 
 
 # ====Begin========================================================================================
