@@ -10,6 +10,7 @@ ENV NBS_LIB_INSTALL_PATH=${NBS_LIB_INSTALL_PATH:?'Build argument needs to be set
 ENV NBS_REPOSITORY_NAME=${NBS_REPOSITORY_NAME:?'Build argument needs to be set and non-empty.'}
 
 ENV NBS_PATH=${NBS_LIB_INSTALL_PATH}/norlab-build-system
+ENV N2ST_PATH=${NBS_LIB_INSTALL_PATH}/norlab-shell-script-tools
 
 ARG NBS_SUPERPROJECT_BUILD_SYSTEM_DIR
 ENV NBS_SUPERPROJECT_BUILD_SYSTEM_DIR=${NBS_SUPERPROJECT_BUILD_SYSTEM_DIR:-"build_system"}
@@ -59,10 +60,7 @@ RUN apt-get update && \
 # ....Install norlab-build-system library..........................................................
 WORKDIR "${NBS_LIB_INSTALL_PATH}"
 RUN git clone --recurse-submodules https://github.com/norlab-ulaval/norlab-build-system.git
-
-# (CRITICAL) ToDo: on dev task end >> mute next bloc ↓↓
-WORKDIR "${NBS_PATH}"
-RUN git checkout dev-NMO-398-move-libpointmatcher-build-system-logic-to-norlab-build-system-submodule
+RUN git clone --recurse-submodules https://github.com/norlab-ulaval/norlab-shell-script-tools.git
 
 # ====Begin========================================================================================
 
