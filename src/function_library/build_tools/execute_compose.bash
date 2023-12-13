@@ -3,18 +3,20 @@
 # Build and run a single container based on a norlab-build-system docker-compose.yaml file
 #
 # Usage:
-#   $ source execute_compose.bash
-#   $ nbs::execute_compose  <docker-compose.yaml> [<optional flag>] [-- <any docker cmd+arg>]
+#   $ source ./execute_compose.bash
+#   $ nbs::execute_compose [--help] <docker-compose.yaml> [<optional flag>] [-- <any docker cmd+arg>]
 #
 #   $ nbs::execute_compose -- run --rm ci
 #
-# Arguments:
-#   [--repository-version v1.3.1]         The repository release tag (default: see REPOSITORY_VERSION)
-#   [--cmake-build-type RelWithDebInfo]
-#                                         Change the cmake compilation mode.
+# Mandatory argument:
+#   <docker-compose.yaml>                 Absolute path to the docker compose file with container specifications
+#
+# Optional arguments:
+#   [--repository-version <version>]      The repository release tag (default: see REPOSITORY_VERSION)
+#   [--cmake-build-type <flag-name>]           Change the cmake compilation mode.
 #                                         Either 'None' 'Debug' 'Release' 'RelWithDebInfo' or 'MinSizeRel'
-#   [--os-name ubuntu]                    The operating system name. Either 'ubuntu' or 'osx' (default: see OS_NAME)
-#   [--os-version jammy]                  Name named operating system version, see .env for supported version
+#   [--os-name <name>]                    The operating system name. Either 'ubuntu' or 'osx' (default: see OS_NAME)
+#   [--os-version <version>]              Name named operating system version, see .env for supported version
 #                                           (default: see OS_VERSION)
 #   [-- <any docker cmd+arg>]             Any argument passed after '--' will be passed to docker compose
 #                                           as docker command and arguments (default: 'up --build --force-recreate')
@@ -45,22 +47,25 @@ function nbs::execute_compose() {
     echo -e "\n
   \$ nbs::execute_compose <docker-compose.yaml> [<optional flag>] [-- <any docker cmd+arg>]
     \033[1m
-      <optional argument>:\033[0m
-        -h, --help                              Get help
-        --repository-version v1.3.1             The repository release tag (default to master branch latest)
-        --cmake-build-type RelWithDebInfo
-                                                Change the cmake compilation mode.
-                                                Either 'None' 'Debug' 'Release' 'RelWithDebInfo' or 'MinSizeRel'
-        --os-name ubuntu                        The operating system name. Either 'ubuntu' or 'osx' (default to 'ubuntu')
-        --os-version jammy                      Name named operating system version, see .env for supported version
-                                                  (default to 'jammy')
-        --docker-debug-logs                     Set Docker builder log output for debug (i.e.BUILDKIT_PROGRESS=plain)
-        --fail-fast                             Exit script at first encountered error
+      Mandatory argument:\033[0m
+        <docker-compose.yaml>           Absolute path to the docker compose file with container specifications
     \033[1m
-      [-- <any docker cmd+arg>]\033[0m                 Any argument passed after '--' will be passed to docker compose as docker
-                                                command and arguments (default to '${DOCKER_COMPOSE_CMD_ARGS}').
-                                                Note: passing script flag via docker --build-arg can be tricky,
-                                                      pass them in the docker-compose.yaml if you experience problem.
+      Optional arguments:\033[0m
+        -h, --help                      Get help
+        --repository-version <version>  The repository release tag (default to master branch latest)
+        --cmake-build-type <flag-name>
+                                        Change the cmake compilation mode.
+                                        Either 'None' 'Debug' 'Release' 'RelWithDebInfo' or 'MinSizeRel'
+        --os-name <name>                The operating system name. Either 'ubuntu' or 'osx' (default to 'ubuntu')
+        --os-version <version>              Name named operating system version, see .env for supported version
+                                        (default to 'jammy')
+        --docker-debug-logs             Set Docker builder log output for debug (i.e.BUILDKIT_PROGRESS=plain)
+        --fail-fast                     Exit script at first encountered error
+    \033[1m
+      [-- <any docker cmd+arg>]\033[0m         Any argument passed after '--' will be passed to docker compose as docker
+                                        command and arguments (default to '${DOCKER_COMPOSE_CMD_ARGS}').
+                                        Note: passing script flag via docker --build-arg can be tricky,
+                                              pass them in the docker-compose.yaml if you experience problem.
   "
   }
 
