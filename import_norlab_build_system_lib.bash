@@ -6,6 +6,11 @@
 #   $ cd <path/to/norlab-build-system/root>
 #   $ source import_norlab_build_system_lib.bash
 #
+
+MSG_DIMMED_FORMAT="\033[1;2m"
+MSG_ERROR_FORMAT="\033[1;31m"
+MSG_END_FORMAT="\033[0m"
+
 function nbs::source_lib(){
   local TMP_CWD
   TMP_CWD=$(pwd)
