@@ -13,6 +13,7 @@
 # Globals: 
 #   none
 # =================================================================================================
+OPTIONS="$@"
 
 function nbs::run_n2st_testsing_tools(){
   local TMP_CWD
@@ -24,7 +25,7 @@ function nbs::run_n2st_testsing_tools(){
 
   # ....Execute N2ST run_bats_tests_in_docker.bash.................................................
   cd "$NBS_PATH"
-  bash "${N2ST_PATH}/tests/bats_testing_tools/run_bats_tests_in_docker.bash" "$@"
+  bash "${N2ST_PATH}/tests/bats_testing_tools/run_bats_tests_in_docker.bash" "$OPTIONS"
 
   # ....Teardown...................................................................................
   cd "$TMP_CWD"

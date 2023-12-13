@@ -65,25 +65,33 @@ teardown() {
 # ====Test casses==================================================================================
 
 @test "${TESTED_FILE} › set environment variable check › expect pass" {
-  assert_empty "${_PATH_TO_SCRIPT}"
   assert_empty "${NBS_PATH}"
   assert_empty "${NBS_TMP_TEST_LIB_SOURCING_ENV_EXPORT}"
 
-  source "${SRC_CODE_PATH}/$TESTED_FILE"
+  cd "${SRC_CODE_PATH}"
+  source "$TESTED_FILE"
 #  run printenv >&3
   run printenv
-  assert_not_empty "${_PATH_TO_SCRIPT}"
   assert_not_empty "${NBS_PATH}"
   assert_not_empty "${NBS_TMP_TEST_LIB_SOURCING_ENV_EXPORT}"
   assert_success
   assert_output --partial "NBS_TMP_TEST_LIB_SOURCING_ENV_EXPORT=Goooooooood morning NorLab"
+  assert_output --partial "PROJECT_PROMPT_NAME=NBS"
+  assert_output --partial "PROJECT_GIT_REMOTE_URL=https://github.com/norlab-ulaval/norlab-build-system"
+  assert_output --partial "PROJECT_GIT_NAME=norlab-build-system"
+
 #  unset NBS_TMP_TEST_LIB_SOURCING_ENV_EXPORT
+}
+
+@test "validate env var are not set between test run" {
+  assert_empty "${NBS_PATH}"
+  assert_empty "${NBS_TMP_TEST_LIB_SOURCING_ENV_EXPORT}"
 }
 
 @test "${TESTED_FILE} › import function check › expect pass" {
 
-  source "${SRC_CODE_PATH}/$TESTED_FILE"
-
+  cd "${SRC_CODE_PATH}"
+  source "$TESTED_FILE"
   assert_empty "${NBS_TMP_TEST_LIB_SOURCING_FUNC}"
   nbs::test_export_fct
   assert_not_empty "${NBS_TMP_TEST_LIB_SOURCING_FUNC}"
@@ -94,9 +102,8 @@ teardown() {
   assert_output --partial "NBS_TMP_TEST_LIB_SOURCING_FUNC=Let it SNOW"
 }
 
-@test "validate env var are not set between test run" {
-  assert_empty "${_PATH_TO_SCRIPT}"
-  assert_empty "${NBS_PATH}"
-  assert_empty "${NBS_TMP_TEST_LIB_SOURCING_ENV_EXPORT}"
-#  fail "›››› Temp" # (CRITICAL) ToDo: on task end >> delete this line ←
+@test "run \"bash $TESTED_FILE\" › expect fail" {
+  run bash "$TESTED_FILE"
+  assert_success
+  assert_output --partial "This script must be sourced from an other script"
 }

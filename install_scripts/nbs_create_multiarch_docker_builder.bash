@@ -24,7 +24,8 @@ function nbs::create_multiarch_docker_builder() {
   # ....Helper function............................................................................
   # import shell functions from utilities library
   N2ST_PATH=${N2ST_PATH:-"${NBS_PATH}/utilities/norlab-shell-script-tools"}
-  source "${N2ST_PATH}/import_norlab_shell_script_tools_lib.bash"
+  cd "${N2ST_PATH}"
+  source "import_norlab_shell_script_tools_lib.bash"
 
   # ====Begin======================================================================================
   print_formated_script_header 'nbs_create_multiarch_docker_builder.bash' "${MSG_LINE_CHAR_UTIL}"

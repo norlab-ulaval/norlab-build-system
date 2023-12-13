@@ -25,7 +25,8 @@ function nbs::install_docker_tools() {
   # ....Helper function............................................................................
   # import shell functions from utilities library
   N2ST_PATH=${N2ST_PATH:-"${NBS_PATH}/utilities/norlab-shell-script-tools"}
-  source "${N2ST_PATH}/import_norlab_shell_script_tools_lib.bash"
+  cd "${N2ST_PATH}"
+  source "import_norlab_shell_script_tools_lib.bash"
 
 #  # ====Begin=====================================================================================
   cd "${N2ST_PATH}"/src/utility_scripts/ && bash install_docker_tools.bash
