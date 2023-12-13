@@ -7,7 +7,8 @@
 #   #!/bin/bash
 #   _PATH_TO_SCRIPT="$(realpath "${BASH_SOURCE[0]}")"
 #   SCRIPT_DIR_PATH="$(dirname "${_PATH_TO_SCRIPT}")"
-#   source "${SCRIPT_DIR_PATH}/../../src/utility_scripts/nbs_run_all_test_and_dryrun_in_directory.bash" "$SCRIPT_DIR_PATH"
+#   NBS_UTIL_SCRIPT="${SCRIPT_DIR_PATH}/../../src/utility_scripts"
+#   source "${NBS_UTIL_SCRIPT}/nbs_run_all_test_and_dryrun_in_directory.bash" "$SCRIPT_DIR_PATH"
 #
 
 set -e            # exit on error

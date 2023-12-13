@@ -3,23 +3,28 @@
 # Execute build matrix over docker compose file specified in '.env.build_matrix.<mySuperProject>'
 #
 # Usage:
-#   $ bash nbs_execute_compose_over_build_matrix.bash <.env.build_matrix.*> [<optional flag>] [-- <any docker cmd+arg>]
+#   $ cd <path/to>/norlab-build-system/src/utility_scripts/
+#   $ bash nbs_execute_compose_over_build_matrix.bash [--help] <.env.build_matrix.*> [<optional flag>] [-- <any docker cmd+arg>]
 #
-#   $ bash nbs_execute_compose_over_build_matrix.bash <.env.build_matrix.*> -- build --dry-run
+#  e.g.:
+#   $ bash nbs_execute_compose_over_build_matrix.bash ".env.build_matrix" -- build --dry-run
 #
-# Arguments:
-#   [--repository-version-build-matrix-override latest]
+# Mandatory argument:
+#   <.env.build_matrix.*>       Absolute path to the dotenv file containing the build matrix
+#
+# Optional arguments:
+#   [--repository-version-build-matrix-override <version>]
 #                               The repository release tag. Override must be a single value
 #                               (default to array sequence specified in .env.build_matrix)
-#   [--cmake-build-type-build-matrix-override RelWithDebInfo]
+#   [--cmake-build-type-build-matrix-override <flag-name>]
 #                               Change the compilation mode.
 #                               Either 'None' 'Debug' 'Release' 'RelWithDebInfo' or 'MinSizeRel'
 #                               (default to array sequence specified in .env.build_matrix)
-#   [--os-name-build-matrix-override ubuntu]
+#   [--os-name-build-matrix-override <name>]
 #                               The operating system name. Override must be a single value
 #                               (default to array sequence specified in .env.build_matrix)
-#   [--ubuntu-version-build-matrix-override jammy]
-#   [--osx-version-build-matrix-override ventura]
+#   [--ubuntu-version-build-matrix-override <version>]
+#   [--osx-version-build-matrix-override <version>]
 #                               Named operating system version. Override must be a single value
 #                               (default to array sequence specified in .env.build_matrix)
 #   [-- <any docker cmd+arg>]
@@ -41,7 +46,7 @@
 
 # ....Pre-condition................................................................................
 if [[ "$(basename "$(pwd)")" != "utility_scripts" ]]; then
-  echo -e "\n[\033[1;31mERROR\033[0m] 'nbs_install_python_dev_tools.bash' script must be sourced from the 'norlab-build-system/src/utility_scripts/' directory!\n Curent working directory is '$(pwd)'"
+  echo -e "\n[\033[1;31mERROR\033[0m] 'nbs_execute_compose_over_build_matrix.bash' script must be executed from the 'norlab-build-system/src/utility_scripts/' directory!\n Curent working directory is '$(pwd)'"
   echo '(press any key to exit)'
   read -r -n 1
   exit 1
@@ -67,22 +72,26 @@ TMP_CWD=$(pwd)
 
 function print_help_in_terminal() {
   echo -e "\n
-\$ $0 <.env.build_matrix.*> [<optional flag>] [-- <any docker cmd+arg>]
+\$ $0 [--help] <.env.build_matrix.*> [<optional flag>] [-- <any docker cmd+arg>]
   \033[1m
-    <optional argument>:\033[0m
+    Mandatory argument:\033[0m
+      <.env.build_matrix.*>
+                          Absolute path to the dotenv file containing the build matrix
+  \033[1m
+    Optional arguments:\033[0m
       -h, --help          Get help
-      --repository-version-build-matrix-override latest
+      --repository-version-build-matrix-override <version>
                           The repository release tag. Override must be a single value
                           (default to array sequence specified in .env.build_matrix)
-      --cmake-build-type-build-matrix-override RelWithDebInfo
+      --cmake-build-type-build-matrix-override <flag-name>
                           Change the cmake compilation mode.
                           Either 'None' 'Debug' 'Release' 'RelWithDebInfo' or 'MinSizeRel'
                           (default to array sequence specified in .env.build_matrix)
-      --os-name-build-matrix-override ubuntu
+      --os-name-build-matrix-override <name>
                           The operating system name. Override must be a single value
                           (default to array sequence specified in .env.build_matrix)
-      --ubuntu-version-build-matrix-override jammy
-      --osx-version-build-matrix-override ventura
+      --ubuntu-version-build-matrix-override <version>
+      --osx-version-build-matrix-override <version>
                           Named operating system version. Override must be a single value
                           (default to array sequence specified in .env.build_matrix)
       --docker-debug-logs

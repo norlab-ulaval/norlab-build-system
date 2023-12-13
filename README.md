@@ -209,20 +209,22 @@ Note: [-] and [+] are collapsible row
 
 # NBS shell script function/script library
 
-- Most code in this repository is tested using _**bats-core**_ and _**docker compose config**_ 
+- Most code in this repository is tested using _**bats-core**_ and _**docker compose config**_ (see [README.md](https://github.com/norlab-ulaval/norlab-build-system/blob/master/tests/README.md) in `tests/` for details)
 - Most code is well documented: each script header and each function definition
+- Go to `install_scripts` for installation-related script:
+  - install docker tools
+  - create multiarch docker builder
 - Go to `build_system_templates/` for `docker-compose.yaml`, `Dockerfile`, `.env` and `.env.build_matrix` templates required to use
   `nbs_execute_compose_over_build_matrix.bash`
 - Go to `src/utility_scripts` for utility script:
   - execute compose over build matrix
   - install python dev tools
   - run all test and dryrun in directory
-- Go to `src/function_library` for shell script functions:
-  - in progress
+- Go to `src/function_library` for shell script functions
   
 ### NBS library import
 
-To import the library functions, execute the following
+To use `NBS` as a library either in a script or in a shell, execute the following
 ```shell
 cd <path/to/norlab-build-system>
 
@@ -231,6 +233,9 @@ bash import_norlab_build_system_lib.bash
 ```
 Note: `norlab-build-system` function are prefixed with `nbs`, i.e.: `nbs::<function_name>`
 
+---
+
+## [NBS test related tools ➚](https://github.com/norlab-ulaval/norlab-build-system/blob/master/tests/README.md)
 
 ---
 

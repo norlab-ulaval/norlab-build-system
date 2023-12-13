@@ -1,5 +1,23 @@
-# Add project test code here
+# Add project test code in this directory
 
+## Test docker related implementation
+
+To validate docker compose configuration and `.env` related logic, execute the following
+
+```shell
+bash run_all_docker_dryrun_and_config_tests.bash
+```
+
+To assess dockerfile implementation, execute the following
+
+```shell
+bash run_all_docker_build_tests.bash
+```
+
+Both scripts will iterate over each `.bash` file that are prefixed by either `dryrun_` or `test_`
+in the `tests_docker_dryrun_and_config` directory and execute each one that match those conditions.
+
+## Test shell script implementation
 Execute 'norlab-build-system' repo shell script test via 'norlab-shell-script-tools' library
 
 Usage:
