@@ -15,6 +15,11 @@
 # =================================================================================================
 OPTIONS="$@"
 
+if [[ -z $OPTIONS ]]; then
+  # Set to default bats tests directory if none specified
+  OPTIONS="tests"
+fi
+
 function nbs::run_n2st_testsing_tools(){
   local TMP_CWD
   TMP_CWD=$(pwd)

@@ -53,9 +53,9 @@ if [[ "$(basename "$(pwd)")" != "utility_scripts" ]]; then
 fi
 
 # ....path resolution logic........................................................................
-# (CRITICAL) ToDo: add cwd check to make sure its executed with bash and from the container_tools dir
-_PATH_TO_SCRIPT="$(realpath "${BASH_SOURCE[0]}")"
+_PATH_TO_SCRIPT2="$(realpath "$0")"
 NBS_PATH="$(dirname "${_PATH_TO_SCRIPT}")/../.."
+
 
 # ....Helper function..............................................................................
 # import shell functions from utilities library

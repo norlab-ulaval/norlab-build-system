@@ -9,15 +9,14 @@ set -e
 
 # ....Pre-condition................................................................................
 if [[ "$(basename "$(pwd)")" != "utility_scripts" ]]; then
-  echo -e "\n[\033[1;31mERROR\033[0m] 'nbs_install_python_dev_tools.bash' script must be sourced from the 'norlab-build-system/src/utility_scripts/' directory!\n Curent working directory is '$(pwd)'"
+  echo -e "\n[\033[1;31mERROR\033[0m] 'nbs_install_python_dev_tools.bash' script must be executed from the 'norlab-build-system/src/utility_scripts/' directory!\n Curent working directory is '$(pwd)'"
   echo '(press any key to exit)'
   read -r -n 1
   exit 1
 fi
 
 # ....path resolution logic........................................................................
-# (CRITICAL) ToDo: add cwd check to make sure its executed with bash and from the container_tools dir
-_PATH_TO_SCRIPT="$(realpath "${BASH_SOURCE[0]}")"
+_PATH_TO_SCRIPT="$(realpath "$0")"
 NBS_PATH="$(dirname "${_PATH_TO_SCRIPT}")/../.."
 
 # ....Helper function..............................................................................
