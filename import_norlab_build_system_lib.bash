@@ -15,7 +15,8 @@ function nbs::source_lib(){
   TMP_CWD=$(pwd)
 
   # ====Begin======================================================================================
-#  NBS_PATH=$(git rev-parse --show-toplevel)
+
+  # Note: can handle both sourcing cases, ie from within a script and from an interactive terminal
   _PATH_TO_SCRIPT="$(realpath "${BASH_SOURCE[0]:-'.'}")"
   NBS_PATH="$(dirname "${_PATH_TO_SCRIPT}")"
   export NBS_PATH

@@ -103,7 +103,7 @@ setup() {
 
   run bash "${TESTED_FILE}" --help "$DOTENV_BUILD_MATRIX"
   assert_success
-  assert_output --regexp .*"Starting".*"${TESTED_FILE}".*"\$".*"${TESTED_FILE}".*"<.env.build_matrix.*>".*"[<optional flag>]".*"[".*"<any docker cmd+arg>]".*"Optional arguments:".*"-h, --help".*"--docker-debug-logs".*"--fail-fast"
+  assert_output --regexp .*"Starting".*"${TESTED_FILE}".*"\$".*"${TESTED_FILE} \[--help\] <.env.build_matrix.*> \[<optional flag>\] \[-- <any docker cmd\+arg>\]".*"Mandatory argument:".*"<.env.build_matrix.*>".*"Optional arguments:".*"-h, --help".*"--docker-debug-logs".*"--fail-fast"
   refute_output --regexp .*"Starting".*"${TESTED_FILE}".*"[NBS]".*"Build images specified in".*"'docker-compose.project_core.yaml'".*"following".*"${DOTENV_BUILD_MATRIX_NAME}"
 }
 
@@ -115,7 +115,7 @@ setup() {
 
   run bash "${TESTED_FILE}" "$DOTENV_BUILD_MATRIX" --help
   assert_success
-  assert_output --regexp .*"Starting".*"${TESTED_FILE}".*"\$".*"${TESTED_FILE}".*"<.env.build_matrix.*>".*"[<optional flag>]".*"[".*"<any docker cmd+arg>]".*"Optional arguments:".*"-h, --help".*"--docker-debug-logs".*"--fail-fast"
+  assert_output --regexp .*"Starting".*"${TESTED_FILE}".*"\$".*"${TESTED_FILE} \[--help\] <.env.build_matrix.*> \[<optional flag>\] \[-- <any docker cmd\+arg>\]".*"Mandatory argument:".*"<.env.build_matrix.*>".*"Optional arguments:".*"-h, --help".*"--docker-debug-logs".*"--fail-fast"
   refute_output --regexp .*"Starting".*"${TESTED_FILE}".*"[NBS]".*"Build images specified in".*"'docker-compose.project_core.yaml'".*"following".*"${DOTENV_BUILD_MATRIX_NAME}"
 }
 

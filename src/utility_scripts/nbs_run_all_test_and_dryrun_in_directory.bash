@@ -28,6 +28,7 @@ function nbs::run_all_script_in_directory(){
 
   declare -a FILE_NAME
 
+  # ====Begin======================================================================================
   # ....Run bash script prefixed with "dryrun_"....................................................
   for each_file in "${SCRIPT_DIR_PATH}"/dryrun_*.bash ; do
     if [[ -f $each_file ]]; then
@@ -55,6 +56,7 @@ function nbs::run_all_script_in_directory(){
   cd "${_TMP_CWD}"
 }
 
+# ::::Main:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 if [[ "${BASH_SOURCE[0]}" = "$0" ]]; then
   # This script is being run, ie: __name__="__main__"
   echo -e "${MSG_ERROR_FORMAT}[ERROR]${MSG_END_FORMAT} This script must be sourced i.e.: $ source $( basename "$0" )" 1>&2

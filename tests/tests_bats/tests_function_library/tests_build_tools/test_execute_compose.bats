@@ -67,29 +67,29 @@ teardown() {
 # ====Test casses==================================================================================
 
 @test "${TESTED_FILE} › function ${TESTED_FCT} › --help as first argument  › execute ok › expect pass" {
-#  skip "tmp mute" # ToDo: on task end >> delete this line ←
+#  skip "dev" # ToDo: on task end >> mute this line ←
   PATH_TO_DOCKERFILE="${SRC_CODE_PATH}"/build_system_templates/nbs_container/project-dependencies/Dockerfile.dependencies
 
-  run ${TESTED_FCT} --help "$PATH_TO_DOCKERFILE"
+  run ${TESTED_FCT} --help "$PATH_TO_DOCKERFILE"  >&3
 
   assert_success
-  assert_output --regexp .*"Starting".*"${TESTED_FCT}".*"\$".*"${TESTED_FCT}".*"<docker-compose.yaml>".*"[<optional flag>]".*"[".*"<any docker cmd+arg>]"
+  assert_output --regexp .*"Starting".*"${TESTED_FCT}".*"\$".*"${TESTED_FCT} \[--help\] <docker-compose.yaml> \[<optional flag>\] \[-- <any docker cmd\+arg>\]"
   refute_output --regexp .*"Starting".*"nbs_execute_compose_over_build_matrix.bash".*"[NBS]".*"Build images specified in".*"'docker-compose.dependencies.yaml'".*"following".*".env.build_matrix"
 }
 
 @test "${TESTED_FILE} › function ${TESTED_FCT} › first arg: dotenv, second arg: --help  › execute ok › expect pass" {
-#  skip "tmp mute" # ToDo: on task end >> delete this line ←
+#  skip "dev" # ToDo: on task end >> mute this line ←
   PATH_TO_DOCKERFILE="${SRC_CODE_PATH}"/build_system_templates/nbs_container/project-dependencies/Dockerfile.dependencies
 
   run ${TESTED_FCT} "$PATH_TO_DOCKERFILE" --help
 
   assert_success
-  assert_output --regexp .*"Starting".*"${TESTED_FCT}".*"\$".*"${TESTED_FCT}".*"<docker-compose.yaml>".*"[<optional flag>]".*"[".*"<any docker cmd+arg>]"
+  assert_output --regexp .*"Starting".*"${TESTED_FCT}".*"\$".*"${TESTED_FCT} \[--help\] <docker-compose.yaml> \[<optional flag>\] \[-- <any docker cmd\+arg>\]"
   refute_output --regexp .*"Starting".*"nbs_execute_compose_over_build_matrix.bash".*"[NBS]".*"Build images specified in".*"'docker-compose.dependencies.yaml'".*"following".*".env.build_matrix"
 }
 
 @test "${TESTED_FILE} › function ${TESTED_FCT} › execute ok › expect pass" {
-#  skip "tmp mute" # ToDo: on task end >> delete this line ←
+#  skip "dev" # ToDo: on task end >> mute this line ←
   PATH_TO_DOCKERFILE="${SRC_CODE_PATH}"/build_system_templates/nbs_container/project-dependencies/Dockerfile.dependencies
 
   run nbs::execute_compose "$PATH_TO_DOCKERFILE"
@@ -102,7 +102,7 @@ teardown() {
 }
 
 @test "${TESTED_FILE} › function ${TESTED_FCT} › integration in nbs_execute_compose_over_build_matrix.bash › execute ok › expect pass" {
-#  skip "tmp mute" # ToDo: on task end >> delete this line ←
+#  skip "dev" # ToDo: on task end >> mute this line ←
   DOTENV_BUILD_MATRIX="${SRC_CODE_PATH}"/build_system_templates/.env.build_matrix.dependencies.template
 
   cd "${SRC_CODE_PATH}/src/utility_scripts/" || exit
