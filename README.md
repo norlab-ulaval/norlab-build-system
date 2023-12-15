@@ -178,29 +178,43 @@ myCoolSuperProject
 Invoking the crawler from a shell script `my_superproject_dependencies_build_matrix_crawler.bash`
 ```shell
 #!/bin/bash
+# =======================================================================================
+#
+# Execute build matrix specified in '.env.build_matrix.dependencies'
+#
+# Redirect the execution to 'nbs_execute_compose_over_build_matrix.bash' 
+#   from the norlab-build-system library
+#
+# Usage:
+#   $ bash my_superproject_dependencies_build_matrix_crawler.bash [<optional flag>] [-- <any docker cmd+arg>]
+#
+#   $ bash my_superproject_dependencies_build_matrix_crawler.bash -- build --dry-run
+#
+# Run script with the '--help' flag for details
+#
+# ======================================================================================
 
-# ....path resolution logic...............................................................
+# ....path resolution logic.............................................................
 SPROJECT_ROOT="$(dirname "$(realpath "$0")")/.."
 SPROJECT_BUILD_SYSTEM_PATH="${SPROJECT_ROOT}/build_system"
 NBS_PATH="${SPROJECT_ROOT}/utilities/norlab-build-system"
 
-# ....Load environment variables from file................................................
+# ....Load environment variables from file..............................................
 cd "${SPROJECT_BUILD_SYSTEM_PATH}" || exit
 set -o allexport && source .env && set +o allexport
 
-# ....Source NBS dependencies.............................................................
+# ....Source NBS dependencies...........................................................
 cd "${NBS_PATH}" || exit
 source import_norlab_build_system_lib.bash
 
-# ====begin===============================================================================
-cd ./src/utility_scripts || exit
+# ====begin=============================================================================
+cd "${NBS_PATH}/src/utility_scripts" || exit
 
 DOTENV_BUILD_MATRIX_REALPATH=${SPROJECT_BUILD_SYSTEM_PATH}/.env.build_matrix.dependencies
 
-bash nbs_execute_compose_over_build_matrix.bash \
-                      "${DOTENV_BUILD_MATRIX_REALPATH}" \
-                      --fail-fast \
-                      -- build --dry-run
+bash nbs_execute_compose_over_build_matrix.bash "${DOTENV_BUILD_MATRIX_REALPATH}" \
+                      --fail-fast "$@"
+                      
 ```
 with `.env.build_matrix.project` defining a build matrix `[latest] x [ubuntu] x [focal, jammy] x [Release, MinSizeRel]`,
 will result in the following 
