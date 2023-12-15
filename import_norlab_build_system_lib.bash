@@ -1,11 +1,13 @@
 #!/bin/bash
-#
+# =================================================================================================
 # Import norlab-build-system function library and dependencies
 #
-# Usage:
+# Usage in a interactive terminal session:
+#
 #   $ cd <path/to/norlab-build-system/root>
 #   $ source import_norlab_build_system_lib.bash
 #
+# =================================================================================================
 
 MSG_ERROR_FORMAT="\033[1;31m"
 MSG_END_FORMAT="\033[0m"
@@ -14,25 +16,23 @@ function nbs::source_lib(){
   local TMP_CWD
   TMP_CWD=$(pwd)
 
-  # ====Begin======================================================================================
-
   # Note: can handle both sourcing cases, ie from within a script and from an interactive terminal
   _PATH_TO_SCRIPT="$(realpath "${BASH_SOURCE[0]:-'.'}")"
-  NBS_PATH="$(dirname "${_PATH_TO_SCRIPT}")"
-  export NBS_PATH
+  _PATH_TO_SCRIPT_DIR="$(dirname "${_PATH_TO_SCRIPT}")"
+
+  # ....Load environment variables from file.......................................................
+  cd "${_PATH_TO_SCRIPT_DIR}" || exit
+  set -o allexport
+  source .env.nbs
+  set +o allexport
 
   # (NICE TO HAVE) ToDo: append lib to PATH (ref task NMO-414)
   # cd "${NBS_PATH}/src/build_tools"
   # PATH=$PATH:${NBS_PATH}/src/build_tools
 
-  # ....Load environment variables from file.......................................................
-  cd "${NBS_PATH}" || exit
-  set -o allexport
-  source .env.nbs
-  set +o allexport
-
+  # ====Begin======================================================================================
   # ....Source NBS dependencies....................................................................
-  cd "${NBS_PATH}/utilities/norlab-shell-script-tools"
+  cd "${N2ST_PATH}"
   source "import_norlab_shell_script_tools_lib.bash"
 
   # ....Source NBS functions.......................................................................
@@ -55,6 +55,7 @@ function nbs::source_lib(){
   cd "${TMP_CWD}"
 }
 
+# ::::Main:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 if [[ "${BASH_SOURCE[0]}" = "$0" ]]; then
   # This script is being run, ie: __name__="__main__"
   echo -e "${MSG_ERROR_FORMAT}[ERROR]${MSG_END_FORMAT} This script must be sourced i.e.: $ source $( basename "$0" )" 1>&2

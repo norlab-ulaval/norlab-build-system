@@ -27,14 +27,17 @@ Maintainer: [Luc Coupal](https://redleader962.github.io)
 </sup>
 </p>  
 
-**`NBS` is a build-infrastructure-agnostic build system custom-made to meet our need in robotic software engineering at NorLab.**
+**`NBS` is a build-infrastructure-agnostic build system custom-made to meet our need 
+<br>
+in robotic software engineering at NorLab.**
 
+<img src="https://img.shields.io/static/v1?label=norlab-teamcity-build-system&message=CI&color=green?style=plastic&logo=teamcity" />
 </div>
 
 <br>
 
 <details>
-  <summary style="font-weight: bolder;font-size: large;"> Install instructions and git submodule usage notes </summary>
+  <summary style="font-weight: bolder;font-size: large;"><b> Install instructions and git submodule usage notes </b></summary>
 
 Just clone the *norlab-build-system* as a submodule in your project repository (ie the
 _superproject_), in an arbitrary directory eg.: `my-project/build_system/utilities/`.

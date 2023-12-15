@@ -64,6 +64,31 @@ teardown() {
 
 # ====Test casses==================================================================================
 
+@test "assess execute with \"source $TESTED_FILE\" › expect pass" {
+  run source "$TESTED_FILE"
+  assert_success
+}
+
+@test "${TESTED_FILE} › check if .env.n2st was properly sourced › expect pass" {
+  source "$TESTED_FILE"
+
+  assert_equal "${N2ST_PROMPT_NAME}" "N2ST"
+  assert_regex "${N2ST_GIT_REMOTE_URL}" "https://github.com/norlab-ulaval/norlab-shell-script-tools"'(".git")?'
+  assert_equal "${N2ST_GIT_NAME}" "norlab-shell-script-tools"
+  assert_equal "${N2ST_SRC_NAME}" "norlab-shell-script-tools"
+  assert_equal "${N2ST_PATH}" "/code/utilities/norlab-shell-script-tools"
+}
+
+@test "${TESTED_FILE} › check if .env.nbs was properly sourced › expect pass" {
+  source "$TESTED_FILE"
+
+  assert_equal "${NBS_PROMPT_NAME}" "NBS"
+  assert_regex "${NBS_GIT_REMOTE_URL}" "https://github.com/norlab-ulaval/norlab-build-system"'(".git")?'
+  assert_equal "${NBS_GIT_NAME}" "norlab-build-system"
+  assert_equal "${NBS_SRC_NAME}" "norlab-build-system"
+  assert_equal "${NBS_PATH}" "/code/norlab-build-system"
+}
+
 @test "${TESTED_FILE} › set environment variable check › expect pass" {
   assert_empty "${NBS_PATH}"
   assert_empty "${NBS_TMP_TEST_LIB_SOURCING_ENV_EXPORT}"
@@ -79,6 +104,9 @@ teardown() {
   assert_output --partial "PROJECT_PROMPT_NAME=NBS"
   assert_output --partial "PROJECT_GIT_REMOTE_URL=https://github.com/norlab-ulaval/norlab-build-system"
   assert_output --partial "PROJECT_GIT_NAME=norlab-build-system"
+  assert_output --partial "PROJECT_PATH=/code/norlab-build-system"
+  assert_output --partial "NBS_PATH=/code/norlab-build-system"
+  assert_output --partial "N2ST_PATH=/code/norlab-build-system/utilities/norlab-shell-script-tools"
 
 #  unset NBS_TMP_TEST_LIB_SOURCING_ENV_EXPORT
 }
@@ -88,7 +116,7 @@ teardown() {
   assert_empty "${NBS_TMP_TEST_LIB_SOURCING_ENV_EXPORT}"
 }
 
-@test "${TESTED_FILE} › import function check › expect pass" {
+@test "${TESTED_FILE} › validate the import function mechanism › expect pass" {
 
   cd "${SRC_CODE_PATH}"
   source "$TESTED_FILE"
@@ -102,8 +130,8 @@ teardown() {
   assert_output --partial "NBS_TMP_TEST_LIB_SOURCING_FUNC=Let it SNOW"
 }
 
-@test "run \"bash $TESTED_FILE\" › expect fail" {
+@test "assess execute with \"bash $TESTED_FILE\" › expect fail" {
   run bash "$TESTED_FILE"
   assert_failure
-  assert_output --regexp "[ERROR]".*"This script must be sourced i.e.:".*"source".*"$TESTED_FILE"
+  assert_output --regexp "\[ERROR\]".*"This script must be sourced i.e.:".*"source".*"$TESTED_FILE"
 }
