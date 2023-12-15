@@ -2,6 +2,8 @@
 # =================================================================================================
 # Execute 'norlab-build-system' repo shell script tests via 'norlab-shell-script-tools' library
 #
+# Note the script can be executed from anywhere as long as its inside the NBS repository
+#
 # Usage:
 #   $ bash run_bats_core_test_in_n2st.bash ['<test-directory>[/<this-bats-test-file.bats>]' ['<image-distro>']]
 #
@@ -10,10 +12,15 @@
 #   - ['<test-directory>/<this-bats-test-file.bats>']  A specific bats file to run, default will
 #                                                      run all bats file in the test directory
 #
-# Globals: 
-#   none
+# Globals: none
+#
 # =================================================================================================
 OPTIONS="$@"
+
+if [[ -z $OPTIONS ]]; then
+  # Set to default bats tests directory if none specified
+  OPTIONS="tests/"
+fi
 
 function nbs::run_n2st_testsing_tools(){
   local TMP_CWD

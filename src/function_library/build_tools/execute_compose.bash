@@ -2,11 +2,13 @@
 #
 # Build and run a single container based on a norlab-build-system docker-compose.yaml file
 #
-# Usage:
-#   $ source ./execute_compose.bash
-#   $ nbs::execute_compose [--help] <docker-compose.yaml> [<optional flag>] [-- <any docker cmd+arg>]
-#
+# Usage example:
+#   $ cd <path/to/norlab-build-system/root>
+#   $ source import_norlab_build_system_lib.bash
 #   $ nbs::execute_compose -- run --rm ci
+#
+# Signature:
+#   $ nbs::execute_compose [--help] <docker-compose.yaml> [<optional flag>] [-- <any docker cmd+arg>]
 #
 # Mandatory argument:
 #   <docker-compose.yaml>                 Absolute path to the docker compose file with container specifications
@@ -27,6 +29,7 @@
 #   [-h, --help]                          Get help
 #
 #
+#
 # Note:
 #   Dont use "set -e" in this script as it will affect the build system policy, use the --fail-fast flag instead
 #
@@ -45,7 +48,7 @@ function nbs::execute_compose() {
 
   function nbs::print_help_in_terminal() {
     echo -e "\n
-  \$ nbs::execute_compose <docker-compose.yaml> [<optional flag>] [-- <any docker cmd+arg>]
+  \$ nbs::execute_compose [--help] <docker-compose.yaml> [<optional flag>] [-- <any docker cmd+arg>]
     \033[1m
       Mandatory argument:\033[0m
         <docker-compose.yaml>           Absolute path to the docker compose file with container specifications

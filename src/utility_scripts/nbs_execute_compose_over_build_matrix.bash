@@ -53,21 +53,19 @@ if [[ "$(basename "$(pwd)")" != "utility_scripts" ]]; then
 fi
 
 # ....path resolution logic........................................................................
-# (CRITICAL) ToDo: add cwd check to make sure its executed with bash and from the container_tools dir
-_PATH_TO_SCRIPT="$(realpath "${BASH_SOURCE[0]}")"
+_PATH_TO_SCRIPT2="$(realpath "$0")"
 NBS_PATH="$(dirname "${_PATH_TO_SCRIPT}")/../.."
+
 
 # ....Helper function..............................................................................
 # import shell functions from utilities library
 source "${NBS_PATH}/import_norlab_build_system_lib.bash"
 
-# ====Begin========================================================================================
-
-# ....Default....................................................................................
+# ....Default......................................................................................
 DOCKER_COMPOSE_CMD_ARGS='build --dry-run'
 BUILD_STATUS_PASS=0
 
-# ....Project root logic.........................................................................
+# ....Project root logic...........................................................................
 TMP_CWD=$(pwd)
 
 function print_help_in_terminal() {
@@ -104,13 +102,13 @@ function print_help_in_terminal() {
 "
 }
 
-# ====Begin======================================================================================
+# ====Begin========================================================================================
 norlab_splash "${NBS_SPLASH_NAME_BUILD_SYSTEM}" "https://github.com/${NBS_REPOSITORY_DOMAIN}/${NBS_REPOSITORY_NAME}"
 
 print_formated_script_header "$0" "${MSG_LINE_CHAR_BUILDER_LVL1}"
 
 
-# ....Script command line flag (help case).......................................................
+# ....Script command line flag (help case).........................................................
 while [ $# -gt 0 ]; do
 
   case $1 in
@@ -126,7 +124,7 @@ while [ $# -gt 0 ]; do
 done
 
 
-# ....Load environment variables from file.......................................................
+# ....Load environment variables from file.........................................................
 DOTENV_BUILD_MATRIX_PATH="$1"
 DOTENV_BUILD_MATRIX=$( basename "$DOTENV_BUILD_MATRIX_PATH" )
 BUILD_SYSTEM_CONFIG_DIR=$( dirname "$DOTENV_BUILD_MATRIX_PATH" )
@@ -143,7 +141,7 @@ else
 fi
 
 
-# ....Script command line flags..................................................................
+# ....Script command line flags....................................................................
 while [ $# -gt 0 ]; do
 
   case $1 in
@@ -204,7 +202,7 @@ while [ $# -gt 0 ]; do
 done
 
 
-# ................................................................................................
+# .................................................................................................
 print_msg "Build images specified in ${MSG_DIMMED_FORMAT}'${NBS_EXECUTE_BUILD_MATRIX_OVER_COMPOSE_FILE:?'Environment variable is not set'}'${MSG_END_FORMAT} following ${MSG_DIMMED_FORMAT}${DOTENV_BUILD_MATRIX}${MSG_END_FORMAT}"
 
 # Freeze build matrix env variable to prevent accidental override
@@ -249,7 +247,6 @@ for EACH_REPO_VERSION in "${NBS_MATRIX_REPOSITORY_VERSIONS[@]}"; do
     fi
 
     for EACH_OS_VERSION in "${CRAWL_OS_VERSIONS[@]}"; do
-#      export NBS_JOB_ID=${NBS_JOB_ID}
 
       if [[ ${TEAMCITY_VERSION} ]]; then
         echo -e "##teamcity[blockOpened name='${MSG_BASE_TEAMCITY} ${EACH_OS_VERSION}']"
@@ -264,8 +261,6 @@ for EACH_REPO_VERSION in "${NBS_MATRIX_REPOSITORY_VERSIONS[@]}"; do
           echo -e "##teamcity[blockOpened name='${MSG_BASE_TEAMCITY} execute nbs::execute_compose' description='${MSG_DIMMED_FORMAT_TEAMCITY} --repository-version ${EACH_REPO_VERSION} --cmake-build-type ${EACH_CMAKE_BUILD_TYPE} --os-name ${EACH_OS_NAME} --os-version ${EACH_OS_VERSION} -- ${DOCKER_COMPOSE_CMD_ARGS}${MSG_END_FORMAT_TEAMCITY}|n']"
           echo " "
         fi
-
-#          source "${NBS_PATH}"/src/build_scripts/nbs_execute_compose.bash ${NBS_EXECUTE_BUILD_MATRIX_OVER_COMPOSE_FILE} \
 
         nbs::execute_compose ${NBS_EXECUTE_BUILD_MATRIX_OVER_COMPOSE_FILE} \
                               --repository-version "${EACH_REPO_VERSION}" \
@@ -299,7 +294,7 @@ for EACH_REPO_VERSION in "${NBS_MATRIX_REPOSITORY_VERSIONS[@]}"; do
           IMAGE_TAG_CRAWLED=("${IMAGE_TAG_CRAWLED[@]}" "${MSG_STATUS} ${NBS_IMAGE_TAG} Compile mode: ${EACH_CMAKE_BUILD_TYPE}")
           IMAGE_TAG_CRAWLED_TC=("${IMAGE_TAG_CRAWLED_TC[@]}" "${MSG_STATUS_TC_TAG} ${NBS_IMAGE_TAG} Compile mode: ${EACH_CMAKE_BUILD_TYPE}")
         fi
-        # .......................................................................................
+        # .........................................................................................
 
         if [[ ${TEAMCITY_VERSION} ]]; then
           echo -e "##teamcity[blockClosed name='${MSG_BASE_TEAMCITY} execute nbs::execute_compose']"
@@ -344,7 +339,7 @@ done
 
 print_formated_script_footer "$0" "${MSG_LINE_CHAR_BUILDER_LVL1}"
 
-# ====TeamCity service message===================================================================
+# ====TeamCity service message=====================================================================
 if [[ ${TEAMCITY_VERSION} ]]; then
   # Tag added to the TeamCity build via a service message
   for tc_build_tag in "${IMAGE_TAG_CRAWLED_TC[@]}" ; do
@@ -352,6 +347,6 @@ if [[ ${TEAMCITY_VERSION} ]]; then
   done
 fi
 
-# ====Teardown===================================================================================
+# ====Teardown=====================================================================================
 cd "${TMP_CWD}"
 exit $BUILD_STATUS_PASS

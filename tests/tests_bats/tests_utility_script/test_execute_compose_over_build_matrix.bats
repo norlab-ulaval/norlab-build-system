@@ -79,7 +79,7 @@ setup() {
 
   run bash "${TESTED_FILE}" "${DOTENV_BUILD_MATRIX}" --fail-fast -- build
   assert_success
-  assert_output --regexp .*"Starting".*"${TESTED_FILE}".*"[NBS]".*"Build images specified in".*"'docker-compose.dependencies.yaml'".*"following".*"${DOTENV_BUILD_MATRIX_NAME}"
+  assert_output --regexp .*"Starting".*"${TESTED_FILE}".*"\[NBS\]".*"Build images specified in".*"'docker-compose.dependencies.yaml'".*"following".*"${DOTENV_BUILD_MATRIX_NAME}"
   assert_output --regexp "Status of tag crawled:".*"Pass".*"› latest-ubuntu-bionic".*"Pass".*"› latest-ubuntu-focal".*"Completed".*"${TESTED_FILE}".*
 }
 
@@ -91,7 +91,7 @@ setup() {
 
   run bash "${TESTED_FILE}" "${DOTENV_BUILD_MATRIX}" --fail-fast -- build
   assert_success
-  assert_output --regexp .*"Starting".*"${TESTED_FILE}".*"[NBS]".*"Build images specified in".*"'docker-compose.project_core.yaml'".*"following".*"${DOTENV_BUILD_MATRIX_NAME}"
+  assert_output --regexp .*"Starting".*"${TESTED_FILE}".*"\[NBS\]".*"Build images specified in".*"'docker-compose.project_core.yaml'".*"following".*"${DOTENV_BUILD_MATRIX_NAME}"
   assert_output --regexp "Status of tag crawled:".*"Pass".*"› latest-ubuntu-bionic Compile mode: Release".*"Pass".*"› latest-ubuntu-bionic Compile mode: RelWithDebInfo".*"Pass".*"› latest-ubuntu-bionic Compile mode: MinSizeRel".*"Pass".*"› latest-ubuntu-focal Compile mode: Release".*"Pass".*"› latest-ubuntu-focal Compile mode: RelWithDebInfo".*"Pass".*"› latest-ubuntu-focal Compile mode: MinSizeRel".*"Pass".*"› latest-ubuntu-jammy Compile mode: Release".*"Pass".*"› latest-ubuntu-jammy Compile mode: RelWithDebInfo".*"Pass".*"› latest-ubuntu-jammy Compile mode: MinSizeRel".*"Completed".*"${TESTED_FILE}".*
 }
 
@@ -103,8 +103,8 @@ setup() {
 
   run bash "${TESTED_FILE}" --help "$DOTENV_BUILD_MATRIX"
   assert_success
-  assert_output --regexp .*"Starting".*"${TESTED_FILE}".*"\$".*"${TESTED_FILE}".*"<.env.build_matrix.*>".*"[<optional flag>]".*"[".*"<any docker cmd+arg>]".*"Optional arguments:".*"-h, --help".*"--docker-debug-logs".*"--fail-fast"
-  refute_output --regexp .*"Starting".*"${TESTED_FILE}".*"[NBS]".*"Build images specified in".*"'docker-compose.project_core.yaml'".*"following".*"${DOTENV_BUILD_MATRIX_NAME}"
+  assert_output --regexp .*"Starting".*"${TESTED_FILE}".*"\$".*"${TESTED_FILE} \[--help\] <.env.build_matrix.*> \[<optional flag>\] \[-- <any docker cmd\+arg>\]".*"Mandatory argument:".*"<.env.build_matrix.*>".*"Optional arguments:".*"-h, --help".*"--docker-debug-logs".*"--fail-fast"
+  refute_output --regexp .*"Starting".*"${TESTED_FILE}".*"\[NBS\]".*"Build images specified in".*"'docker-compose.project_core.yaml'".*"following".*"${DOTENV_BUILD_MATRIX_NAME}"
 }
 
 @test "${TESTED_FILE} › first arg: dotenv, second arg: --help › execute ok › expect pass" {
@@ -115,8 +115,8 @@ setup() {
 
   run bash "${TESTED_FILE}" "$DOTENV_BUILD_MATRIX" --help
   assert_success
-  assert_output --regexp .*"Starting".*"${TESTED_FILE}".*"\$".*"${TESTED_FILE}".*"<.env.build_matrix.*>".*"[<optional flag>]".*"[".*"<any docker cmd+arg>]".*"Optional arguments:".*"-h, --help".*"--docker-debug-logs".*"--fail-fast"
-  refute_output --regexp .*"Starting".*"${TESTED_FILE}".*"[NBS]".*"Build images specified in".*"'docker-compose.project_core.yaml'".*"following".*"${DOTENV_BUILD_MATRIX_NAME}"
+  assert_output --regexp .*"Starting".*"${TESTED_FILE}".*"\$".*"${TESTED_FILE} \[--help\] <.env.build_matrix.*> \[<optional flag>\] \[-- <any docker cmd\+arg>\]".*"Mandatory argument:".*"<.env.build_matrix.*>".*"Optional arguments:".*"-h, --help".*"--docker-debug-logs".*"--fail-fast"
+  refute_output --regexp .*"Starting".*"${TESTED_FILE}".*"\[NBS\]".*"Build images specified in".*"'docker-compose.project_core.yaml'".*"following".*"${DOTENV_BUILD_MATRIX_NAME}"
 }
 
 # ToDo: implement >> test for IS_TEAMCITY_RUN==true casses
