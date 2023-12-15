@@ -16,12 +16,13 @@ function nbs::source_lib(){
   local TMP_CWD
   TMP_CWD=$(pwd)
 
+  # ....path resolution logic......................................................................
   # Note: can handle both sourcing cases, ie from within a script and from an interactive terminal
   _PATH_TO_SCRIPT="$(realpath "${BASH_SOURCE[0]:-'.'}")"
-  _PATH_TO_SCRIPT_DIR="$(dirname "${_PATH_TO_SCRIPT}")"
+  _REPO_ROOT="$(dirname "${_PATH_TO_SCRIPT}")"
 
   # ....Load environment variables from file.......................................................
-  cd "${_PATH_TO_SCRIPT_DIR}" || exit
+  cd "${_REPO_ROOT}" || exit
   set -o allexport
   source .env.nbs
   set +o allexport
