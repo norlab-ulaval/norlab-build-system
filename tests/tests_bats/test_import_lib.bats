@@ -70,13 +70,28 @@ teardown() {
 }
 
 @test "${TESTED_FILE} › check if .env.n2st was properly sourced › expect pass" {
+  # ....Pre-condition..............................................................................
+  assert_empty ${PROJECT_PROMPT_NAME}
+  assert_empty ${PROJECT_GIT_REMOTE_URL}
+  assert_empty ${PROJECT_GIT_NAME}
+  assert_empty ${PROJECT_SRC_NAME}
+  assert_empty ${PROJECT_PATH}
+
+  assert_empty ${N2ST_PROMPT_NAME}
+  assert_empty ${N2ST_GIT_REMOTE_URL}
+  assert_empty ${N2ST_GIT_NAME}
+  assert_empty ${N2ST_SRC_NAME}
+  assert_empty ${N2ST_PATH}
+
+  # ....Import N2ST library........................................................................
   source "$TESTED_FILE"
 
+  # ....Tests......................................................................................
   assert_equal "${N2ST_PROMPT_NAME}" "N2ST"
   assert_regex "${N2ST_GIT_REMOTE_URL}" "https://github.com/norlab-ulaval/norlab-shell-script-tools"'(".git")?'
   assert_equal "${N2ST_GIT_NAME}" "norlab-shell-script-tools"
   assert_equal "${N2ST_SRC_NAME}" "norlab-shell-script-tools"
-  assert_equal "${N2ST_PATH}" "/code/utilities/norlab-shell-script-tools"
+  assert_equal "${N2ST_PATH}" "/code/norlab-build-system/utilities/norlab-shell-script-tools"
 }
 
 @test "${TESTED_FILE} › check if .env.nbs was properly sourced › expect pass" {
@@ -89,7 +104,7 @@ teardown() {
   assert_equal "${NBS_PATH}" "/code/norlab-build-system"
 }
 
-@test "${TESTED_FILE} › set environment variable check › expect pass" {
+@test "${TESTED_FILE} › set custom environment variable check › expect pass" {
   assert_empty "${NBS_PATH}"
   assert_empty "${NBS_TMP_TEST_LIB_SOURCING_ENV_EXPORT}"
 
@@ -101,13 +116,6 @@ teardown() {
   assert_not_empty "${NBS_TMP_TEST_LIB_SOURCING_ENV_EXPORT}"
   assert_success
   assert_output --partial "NBS_TMP_TEST_LIB_SOURCING_ENV_EXPORT=Goooooooood morning NorLab"
-  assert_output --partial "PROJECT_PROMPT_NAME=NBS"
-  assert_output --partial "PROJECT_GIT_REMOTE_URL=https://github.com/norlab-ulaval/norlab-build-system"
-  assert_output --partial "PROJECT_GIT_NAME=norlab-build-system"
-  assert_output --partial "PROJECT_PATH=/code/norlab-build-system"
-  assert_output --partial "NBS_PATH=/code/norlab-build-system"
-  assert_output --partial "N2ST_PATH=/code/norlab-build-system/utilities/norlab-shell-script-tools"
-
 #  unset NBS_TMP_TEST_LIB_SOURCING_ENV_EXPORT
 }
 

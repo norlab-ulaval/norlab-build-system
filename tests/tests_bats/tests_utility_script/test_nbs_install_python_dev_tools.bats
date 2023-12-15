@@ -72,7 +72,7 @@ teardown() {
   #  - Alt: Use the 'yes [n]' command which optionaly send n time
   run bash -c "yes 1 | bash ./utility_scripts/$TESTED_FILE"
   assert_failure 1
-  assert_output --partial "'$TESTED_FILE' script must be sourced from"
+  assert_output --regexp  .*"\[".*"ERROR".*"\]".*"'nbs_install_python_dev_tools.bash' script must be executed from the"
 }
 
 @test "sourcing $TESTED_FILE from ok cwd › expect pass" {
