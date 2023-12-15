@@ -70,19 +70,18 @@ setup() {
 #}
 
 # ====Test casses==================================================================================
-
-
 function setup_dotenv_build_matrix_dependencies() {
   DOTENV_BUILD_MATRIX="${SRC_CODE_PATH}"/build_system_templates/.env.build_matrix.dependencies.template
   DOTENV_BUILD_MATRIX_NAME=$( basename "${DOTENV_BUILD_MATRIX}" )
 }
+
 
 function setup_dotenv_build_matrix_superproject() {
   DOTENV_BUILD_MATRIX="${SRC_CODE_PATH}"/build_system_templates/.env.build_matrix.project.template
   DOTENV_BUILD_MATRIX_NAME=$( basename "${DOTENV_BUILD_MATRIX}" )
 }
 
-# ....Dependencies build matrix tests..............................................................
+# ....Prompt related tests.........................................................................
 @test "${TESTED_FILE} › NBS console prompt name is not overiten by superproject dotenv PROJECT_PROMPT_NAME › expect pass" {
 
   setup_dotenv_build_matrix_dependencies
@@ -93,6 +92,22 @@ function setup_dotenv_build_matrix_superproject() {
   assert_output --regexp "\[NBS done\]".*"FINAL › Build matrix completed with command".*"Completed".*"${TESTED_FILE}".*
 }
 
+# ....Flag related tests...........................................................................
+@test "${TESTED_FILE} › flags are passed across script and function as expected › expect pass" {
+
+  setup_dotenv_build_matrix_dependencies
+
+  run bash "${TESTED_FILE}" "${DOTENV_BUILD_MATRIX}" --fail-fast -- build --push
+  assert_output --regexp .*"\[NBS\]".*"Environment variables".*"(build matrix)".*"set for compose:".*"NBS_MATRIX_UBUNTU_SUPPORTED_VERSIONS=\(bionic focal jammy\)"
+  assert_output --regexp .*"\[NBS done\]".*"FINAL › Build matrix completed with command".*"\$".*"docker compose -f ${COMPOSE_FILE}".*"build --push"
+
+  run bash "${TESTED_FILE}" "${DOTENV_BUILD_MATRIX}" --ubuntu-version-build-matrix-override jammy --fail-fast -- config --quiet
+  assert_success
+  assert_output --regexp .*"\[NBS\]".*"Environment variables".*"(build matrix)".*"set for compose:".*"NBS_MATRIX_UBUNTU_SUPPORTED_VERSIONS=\(jammy\)"
+  assert_output --regexp .*"\[NBS done\]".*"FINAL › Build matrix completed with command".*"\$".*"docker compose -f ${COMPOSE_FILE}".*"config --quiet"
+}
+
+# ....Build matrix tests...........................................................................
 @test "${TESTED_FILE} › dependencies image › execute ok › expect pass" {
 
   setup_dotenv_build_matrix_dependencies
@@ -103,7 +118,6 @@ function setup_dotenv_build_matrix_superproject() {
   assert_output --regexp "Status of tag crawled:".*"Pass".*"› latest-ubuntu-bionic".*"Pass".*"› latest-ubuntu-focal".*"Completed".*"${TESTED_FILE}".*
 }
 
-# ....Super-project build matrix tests.............................................................
 @test "${TESTED_FILE} › project-core image › execute ok › expect pass" {
 
   setup_dotenv_build_matrix_superproject
@@ -114,6 +128,7 @@ function setup_dotenv_build_matrix_superproject() {
   assert_output --regexp "Status of tag crawled:".*"Pass".*"› latest-ubuntu-bionic Compile mode: Release".*"Pass".*"› latest-ubuntu-bionic Compile mode: RelWithDebInfo".*"Pass".*"› latest-ubuntu-bionic Compile mode: MinSizeRel".*"Pass".*"› latest-ubuntu-focal Compile mode: Release".*"Pass".*"› latest-ubuntu-focal Compile mode: RelWithDebInfo".*"Pass".*"› latest-ubuntu-focal Compile mode: MinSizeRel".*"Pass".*"› latest-ubuntu-jammy Compile mode: Release".*"Pass".*"› latest-ubuntu-jammy Compile mode: RelWithDebInfo".*"Pass".*"› latest-ubuntu-jammy Compile mode: MinSizeRel".*"Completed".*"${TESTED_FILE}".*
 }
 
+# ....Test --help flag related logic...............................................................
 @test "${TESTED_FILE} › --help as first argument › execute ok › expect pass" {
 
   setup_dotenv_build_matrix_superproject
