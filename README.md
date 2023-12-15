@@ -157,7 +157,7 @@ myCoolSuperProject
 ┣━━ src/
 ┣━━ test/
 ┣━━ build_system/
-┃   ┣━━ mycoolproject_crawl_dependencies_build_matrix.bash
+┃   ┣━━ my_superproject_dependencies_build_matrix_crawler.bash
 ┃   ┣━━ nbs_container
 ┃   ┃   ┣━━ Dockerfile.dependencies
 ┃   ┃   ┣━━ Dockerfile.project.ci_PR
@@ -175,23 +175,30 @@ myCoolSuperProject
 ┗━━ README.md
 ```
 
-Invoking the crawler from a shell script `mycoolproject_crawl_dependencies_build_matrix.bash`
+Invoking the crawler from a shell script `my_superproject_dependencies_build_matrix_crawler.bash`
 ```shell
 #!/bin/bash
 
-# ....path resolution logic.............................................
-_PATH_TO_SCRIPT="$(realpath "${BASH_SOURCE[0]}")"
-SUPER_ROOT_DIR="$(dirname "${_PATH_TO_SCRIPT}")../"
+# ....path resolution logic...............................................................
+SPROJECT_ROOT="$(dirname "$(realpath "$0")")/.."
+SPROJECT_BUILD_SYSTEM_PATH="${SPROJECT_ROOT}/build_system"
+NBS_PATH="${SPROJECT_ROOT}/utilities/norlab-build-system"
 
-# ====begin=============================================================
-DOTENV_BUILD_MATRIX=${SUPER_ROOT_DIR}/build_system/.env.build_matrix.dependencies
+# ....Load environment variables from file................................................
+cd "${SPROJECT_BUILD_SYSTEM_PATH}" || exit
+set -o allexport && source .env && set +o allexport
 
-cd "${SUPER_ROOT_DIR}"
-set -o allexport && source ./build_system/.env && set +o allexport
+# ....Source NBS dependencies.............................................................
+cd "${NBS_PATH}" || exit
+source import_norlab_build_system_lib.bash
 
-cd ./utilities/norlab-build-system/src/utility_scripts
+# ====begin===============================================================================
+cd ./src/utility_scripts || exit
+
+DOTENV_BUILD_MATRIX_REALPATH=${SPROJECT_BUILD_SYSTEM_PATH}/.env.build_matrix.dependencies
+
 bash nbs_execute_compose_over_build_matrix.bash \
-                      "${DOTENV_BUILD_MATRIX}" \
+                      "${DOTENV_BUILD_MATRIX_REALPATH}" \
                       --fail-fast \
                       -- build --dry-run
 ```
