@@ -22,19 +22,22 @@
 <a href="https://hub.docker.com/repositories/norlabulaval">norlabulaval</a>
 (Docker Hub) &nbsp;
 
-Maintainer: [Luc Coupal](https://redleader962.github.io)
 
 </sup>
 </p>  
 
-**`NBS` is a build-infrastructure-agnostic build system custom-made to meet our need 
+**`NBS` is a build-infrastructure-agnostic build system custom-made 
 <br>
-in robotic software engineering at NorLab.**
+to meet our need in robotic software engineering at NorLab.**
 
-<img src="https://img.shields.io/static/v1?label=norlab-teamcity-build-system&message=CI&color=green?style=plastic&logo=teamcity" />
+<img src="https://img.shields.io/static/v1?label=powered by JetBrains TeamCity&message=CI/CD&color=green?style=plastic&logo=teamcity" />
+<br>
+<br>
+
 </div>
-
 <br>
+
+Maintainer: [Luc Coupal](https://redleader962.github.io)
 
 <details>
   <summary style="font-weight: bolder;font-size: large;"><b> Install instructions and git submodule usage notes </b></summary>
