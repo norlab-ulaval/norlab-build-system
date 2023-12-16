@@ -125,7 +125,7 @@ This should solve the problem permanently.
 
 ---
 
-#### `v0.2.1` release notes:
+#### `v0.2.5-beta` release notes:
 
 - Be advised, this is a beta release and we might introduce API breaking change without notice.
 - This version is used in `libpointmatcher-build-system` and `libnabo-build-system`
