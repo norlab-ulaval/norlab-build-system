@@ -70,12 +70,47 @@ setup() {
 #}
 
 # ====Test casses==================================================================================
-
-@test "${TESTED_FILE} › dependencies image › execute ok › expect pass" {
-#  skip "tmp mute" # ToDo: on task end >> delete this line ←
-
+function setup_dotenv_build_matrix_dependencies() {
   DOTENV_BUILD_MATRIX="${SRC_CODE_PATH}"/build_system_templates/.env.build_matrix.dependencies.template
   DOTENV_BUILD_MATRIX_NAME=$( basename "${DOTENV_BUILD_MATRIX}" )
+}
+
+
+function setup_dotenv_build_matrix_superproject() {
+  DOTENV_BUILD_MATRIX="${SRC_CODE_PATH}"/build_system_templates/.env.build_matrix.project.template
+  DOTENV_BUILD_MATRIX_NAME=$( basename "${DOTENV_BUILD_MATRIX}" )
+}
+
+# ....Prompt related tests.........................................................................
+@test "${TESTED_FILE} › NBS console prompt name is not overiten by superproject dotenv PROJECT_PROMPT_NAME › expect pass" {
+
+  setup_dotenv_build_matrix_dependencies
+
+  run bash "${TESTED_FILE}" "${DOTENV_BUILD_MATRIX}" --fail-fast -- build
+  assert_success
+  assert_output --regexp .*"Starting".*"${TESTED_FILE}".*"\[NBS\]".*"Build images specified in".*"\[NBS\]".*"Environment variables"
+  assert_output --regexp "\[NBS done\]".*"FINAL › Build matrix completed with command".*"Completed".*"${TESTED_FILE}".*
+}
+
+# ....Flag related tests...........................................................................
+@test "${TESTED_FILE} › flags are passed across script and function as expected › expect pass" {
+
+  setup_dotenv_build_matrix_dependencies
+
+  run bash "${TESTED_FILE}" "${DOTENV_BUILD_MATRIX}" --fail-fast -- build --push
+  assert_output --regexp .*"\[NBS\]".*"Environment variables".*"(build matrix)".*"set for compose:".*"NBS_MATRIX_UBUNTU_SUPPORTED_VERSIONS=\(bionic focal jammy\)"
+  assert_output --regexp .*"\[NBS done\]".*"FINAL › Build matrix completed with command".*"\$".*"docker compose -f ${COMPOSE_FILE}".*"build --push"
+
+  run bash "${TESTED_FILE}" "${DOTENV_BUILD_MATRIX}" --ubuntu-version-build-matrix-override jammy --fail-fast -- config --quiet
+  assert_success
+  assert_output --regexp .*"\[NBS\]".*"Environment variables".*"(build matrix)".*"set for compose:".*"NBS_MATRIX_UBUNTU_SUPPORTED_VERSIONS=\(jammy\)"
+  assert_output --regexp .*"\[NBS done\]".*"FINAL › Build matrix completed with command".*"\$".*"docker compose -f ${COMPOSE_FILE}".*"config --quiet"
+}
+
+# ....Build matrix tests...........................................................................
+@test "${TESTED_FILE} › dependencies image › execute ok › expect pass" {
+
+  setup_dotenv_build_matrix_dependencies
 
   run bash "${TESTED_FILE}" "${DOTENV_BUILD_MATRIX}" --fail-fast -- build
   assert_success
@@ -84,10 +119,8 @@ setup() {
 }
 
 @test "${TESTED_FILE} › project-core image › execute ok › expect pass" {
-#  skip "tmp mute" # ToDo: on task end >> delete this line ←
 
-  DOTENV_BUILD_MATRIX="${SRC_CODE_PATH}"/build_system_templates/.env.build_matrix.project.template
-  DOTENV_BUILD_MATRIX_NAME=$( basename "${DOTENV_BUILD_MATRIX}" )
+  setup_dotenv_build_matrix_superproject
 
   run bash "${TESTED_FILE}" "${DOTENV_BUILD_MATRIX}" --fail-fast -- build
   assert_success
@@ -95,11 +128,10 @@ setup() {
   assert_output --regexp "Status of tag crawled:".*"Pass".*"› latest-ubuntu-bionic Compile mode: Release".*"Pass".*"› latest-ubuntu-bionic Compile mode: RelWithDebInfo".*"Pass".*"› latest-ubuntu-bionic Compile mode: MinSizeRel".*"Pass".*"› latest-ubuntu-focal Compile mode: Release".*"Pass".*"› latest-ubuntu-focal Compile mode: RelWithDebInfo".*"Pass".*"› latest-ubuntu-focal Compile mode: MinSizeRel".*"Pass".*"› latest-ubuntu-jammy Compile mode: Release".*"Pass".*"› latest-ubuntu-jammy Compile mode: RelWithDebInfo".*"Pass".*"› latest-ubuntu-jammy Compile mode: MinSizeRel".*"Completed".*"${TESTED_FILE}".*
 }
 
+# ....Test --help flag related logic...............................................................
 @test "${TESTED_FILE} › --help as first argument › execute ok › expect pass" {
-#  skip "tmp mute" # ToDo: on task end >> delete this line ←
 
-  DOTENV_BUILD_MATRIX="${SRC_CODE_PATH}"/build_system_templates/.env.build_matrix.project.template
-  DOTENV_BUILD_MATRIX_NAME=$( basename "${DOTENV_BUILD_MATRIX}" )
+  setup_dotenv_build_matrix_superproject
 
   run bash "${TESTED_FILE}" --help "$DOTENV_BUILD_MATRIX"
   assert_success
@@ -107,16 +139,26 @@ setup() {
   refute_output --regexp .*"Starting".*"${TESTED_FILE}".*"\[NBS\]".*"Build images specified in".*"'docker-compose.project_core.yaml'".*"following".*"${DOTENV_BUILD_MATRIX_NAME}"
 }
 
-@test "${TESTED_FILE} › first arg: dotenv, second arg: --help › execute ok › expect pass" {
-#  skip "tmp mute" # ToDo: on task end >> delete this line ←
 
-  DOTENV_BUILD_MATRIX="${SRC_CODE_PATH}"/build_system_templates/.env.build_matrix.project.template
-  DOTENV_BUILD_MATRIX_NAME=$( basename "${DOTENV_BUILD_MATRIX}" )
+@test "${TESTED_FILE} › first arg: dotenv, second arg: --help › execute ok › expect pass" {
+
+  setup_dotenv_build_matrix_superproject
 
   run bash "${TESTED_FILE}" "$DOTENV_BUILD_MATRIX" --help
   assert_success
   assert_output --regexp .*"Starting".*"${TESTED_FILE}".*"\$".*"${TESTED_FILE} \[--help\] <.env.build_matrix.*> \[<optional flag>\] \[-- <any docker cmd\+arg>\]".*"Mandatory argument:".*"<.env.build_matrix.*>".*"Optional arguments:".*"-h, --help".*"--docker-debug-logs".*"--fail-fast"
   refute_output --regexp .*"Starting".*"${TESTED_FILE}".*"\[NBS\]".*"Build images specified in".*"'docker-compose.project_core.yaml'".*"following".*"${DOTENV_BUILD_MATRIX_NAME}"
+}
+
+# ....Test bad input parameter.....................................................................
+@test "${TESTED_FILE} › case where the dotenv build matrix is missing with or without a --help flag › execute ok › expect pass" {
+
+  setup_dotenv_build_matrix_superproject
+
+  run bash "${TESTED_FILE}" --fail-fast --help
+
+  assert_failure
+  assert_output --regexp .*"\[".*"ERROR".*"\]".*"${TESTED_FILE}".*"Unexpected argument".*"--fail-fast".*"Unless you pass the".*"--help".*"flag, the first argument must be a".*".env.build_matrix".*"file."
 }
 
 # ToDo: implement >> test for IS_TEAMCITY_RUN==true casses
