@@ -193,6 +193,7 @@ Invoking the crawler from a shell script `my_superproject_dependencies_build_mat
 # Run script with the '--help' flag for details
 #
 # ======================================================================================
+PARAMS="$@"
 
 # ....path resolution logic.............................................................
 SPROJECT_ROOT="$(dirname "$(realpath "$0")")/.."
@@ -213,7 +214,7 @@ cd "${NBS_PATH}/src/utility_scripts" || exit
 DOTENV_BUILD_MATRIX_REALPATH=${SPROJECT_BUILD_SYSTEM_PATH}/.env.build_matrix.dependencies
 
 bash nbs_execute_compose_over_build_matrix.bash "${DOTENV_BUILD_MATRIX_REALPATH}" \
-                      --fail-fast "$@"
+                      --fail-fast "${PARAMS}"
                       
 ```
 with `.env.build_matrix.project` defining a build matrix `[latest] x [ubuntu] x [focal, jammy] x [Release, MinSizeRel]`,

@@ -105,6 +105,15 @@ function nbs::execute_compose() {
 
   done
 
+
+  # Handle unexpected argument: case missing the ".env.build_matrix"
+  PARAM_TEST="$1"
+  PARMA_TEST_FILE_EXTENSION=${PARAM_TEST##*.}
+  if [[ ! .yaml == .${PARMA_TEST_FILE_EXTENSION} ]]; then
+    echo -e "\n[\033[1;31mERROR\033[0m] nbs::execute_compose: Unexpected argument ${MSG_DIMMED_FORMAT}${PARAM_TEST}${MSG_END_FORMAT}. Unless you pass the ${MSG_DIMMED_FORMAT}--help${MSG_END_FORMAT} flag, the first argument must be a ${MSG_DIMMED_FORMAT}docker-compose.<name>.yaml${MSG_END_FORMAT} file." 1>&2
+    exit 1
+  fi
+
   _COMPOSE_FILE="${1:?'Missing the docker-compose.yaml file mandatory argument'}"
   shift # Remove argument value
 

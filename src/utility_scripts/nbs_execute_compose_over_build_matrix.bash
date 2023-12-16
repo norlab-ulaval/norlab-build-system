@@ -123,18 +123,27 @@ while [ $# -gt 0 ]; do
 
 done
 
-
 # ....Load environment variables from file.........................................................
 DOTENV_BUILD_MATRIX_PATH="$1"
-DOTENV_BUILD_MATRIX=$( basename "$DOTENV_BUILD_MATRIX_PATH" )
-BUILD_SYSTEM_CONFIG_DIR=$( dirname "$DOTENV_BUILD_MATRIX_PATH" )
-cd "$BUILD_SYSTEM_CONFIG_DIR"
-shift
 
-if [[ ! -f "$DOTENV_BUILD_MATRIX" ]]; then
-  echo -e "\n[\033[1;31mERROR\033[0m] '$0' dotenv file $DOTENV_BUILD_MATRIX is unreachable"
+# Handle unexpected argument: case missing the ".env.build_matrix"
+#set -x
+PARAM_TEST=$( basename "$DOTENV_BUILD_MATRIX_PATH" ) || PARAM_TEST="${DOTENV_BUILD_MATRIX_PATH}"
+if [[ ! .env.build_matrix. == ${PARAM_TEST:0:18} ]]; then
+  echo -e "\n[\033[1;31mERROR\033[0m] '$0': Unexpected argument ${MSG_DIMMED_FORMAT}${PARAM_TEST}${MSG_END_FORMAT}. Unless you pass the ${MSG_DIMMED_FORMAT}--help${MSG_END_FORMAT} flag, the first argument must be a ${MSG_DIMMED_FORMAT}.env.build_matrix${MSG_END_FORMAT} file." 1>&2
+  exit 1
+fi
+
+
+if [[ ! -f "${DOTENV_BUILD_MATRIX_PATH}" ]]; then
+  echo -e "\n[\033[1;31mERROR\033[0m] '$0': dotenv file ${MSG_DIMMED_FORMAT}${DOTENV_BUILD_MATRIX}${MSG_END_FORMAT} is unreachable" 1>&2
   exit 1
 else
+  DOTENV_BUILD_MATRIX=$( basename "$DOTENV_BUILD_MATRIX_PATH" )
+  BUILD_SYSTEM_CONFIG_DIR=$( dirname "$DOTENV_BUILD_MATRIX_PATH" )
+  cd "$BUILD_SYSTEM_CONFIG_DIR"
+  shift
+
   set -o allexport
   source "$DOTENV_BUILD_MATRIX"
   set +o allexport
