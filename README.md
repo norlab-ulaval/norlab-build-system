@@ -178,8 +178,15 @@ myCoolSuperProject
 ┗━━ README.md
 ```
 
-Invoking the crawler from a shell script `my_superproject_dependencies_build_matrix_crawler.bash`
+## Crawling a build matrix localy (on your workstation)
+
+Assuming that 
+- `.env.build_matrix.project` defining a build matrix `[latest] x [ubuntu] x [focal, jammy] x [Release, MinSizeRel]`,
+- `my_superproject_dependencies_build_matrix_crawler.bash` is a custom script that import `NBS` such as in the following example
+
 ```shell
+my_superproject_dependencies_build_matrix_crawler.bash
+
 #!/bin/bash
 # =======================================================================================
 #
@@ -220,17 +227,33 @@ bash nbs_execute_compose_over_build_matrix.bash "${DOTENV_BUILD_MATRIX_REALPATH}
                       --fail-fast "${PARAMS}"
                       
 ```
-with `.env.build_matrix.project` defining a build matrix `[latest] x [ubuntu] x [focal, jammy] x [Release, MinSizeRel]`,
-will result in the following 
+
+then invoking the crawler in your superproject
+
+```shell
+$ cd <path/to/my/superproject>
+$ bash ./build_system/my_superproject_dependencies_build_matrix_crawler.bash
+```
+will result in the following build log 
 
 ![](visual/NBS_dryrun_v2_1.jpg)
 ![](visual/NBS_dryrun_v2_2.jpg)
 
-In TeamCity, with NBS support for `##teamcity[blockOpened` and `##teamcityblockClosed` service messages, 
-a larger build matrix such as `[latest] x [ubuntu] x [bionic, focal, jammy] x [Release, RelWithDebInfo, MinSizeRel]`
-will result in the following:
 
-Note: [-] and [+] are collapsible row
+## Crawling a build matrix on a build server
+
+`NBS` is build infrastructure agnostic, meaning it can be run any unix system provided the dependencies are installed. 
+We provide support for _Jetbrains TeamCity_ special features related to service messages, tag and slack notification as it's our build infrastructure of choice at NorLab.
+
+### Crawling a build matrix on a _Jetbrains TeamCity_ build server
+
+With `NBS` support for `##teamcity[blockOpened` and `##teamcityblockClosed` service messages which create
+collapsable bloc in build logs, 
+a larger build matrix such as `[latest] x [ubuntu] x [bionic, focal, jammy] x [Release, RelWithDebInfo, MinSizeRel]`
+will result in an well-structured, easy to read build logs such as the following
+
+Note: [-] and [+] are collapsible rows
+
 
 ![](visual/NBS_dryrun_teamcity.jpg)
 
