@@ -223,8 +223,10 @@ cd "${NBS_PATH}/src/utility_scripts" || exit
 
 DOTENV_BUILD_MATRIX_REALPATH=${SPROJECT_BUILD_SYSTEM_PATH}/.env.build_matrix.dependencies
 
+# Note: do not double cote PARAMS or threat it as a array otherwise it will cause error
+# shellcheck disable=SC2086
 bash nbs_execute_compose_over_build_matrix.bash "${DOTENV_BUILD_MATRIX_REALPATH}" \
-                      --fail-fast "${PARAMS}"
+                      --fail-fast $PARAMS
                       
 ```
 
