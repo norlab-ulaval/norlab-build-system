@@ -150,6 +150,16 @@ function setup_dotenv_build_matrix_superproject() {
   refute_output --regexp .*"Starting".*"${TESTED_FILE}".*"\[NBS\]".*"Build images specified in".*"'docker-compose.project_core.yaml'".*"following".*"${DOTENV_BUILD_MATRIX_NAME}"
 }
 
+@test "${TESTED_FILE} › first arg: dotenv, third arg: --help › execute ok › expect pass" {
+
+  setup_dotenv_build_matrix_superproject
+
+  run bash "${TESTED_FILE}" "$DOTENV_BUILD_MATRIX" --fail-fast --help
+  assert_success
+  assert_output --regexp .*"Starting".*"${TESTED_FILE}".*"\$".*"${TESTED_FILE} \[--help\] <.env.build_matrix.*> \[<optional flag>\] \[-- <any docker cmd\+arg>\]".*"Mandatory argument:".*"<.env.build_matrix.*>".*"Optional arguments:".*"-h, --help".*"--docker-debug-logs".*"--fail-fast"
+  refute_output --regexp .*"Starting".*"${TESTED_FILE}".*"\[NBS\]".*"Build images specified in".*"'docker-compose.project_core.yaml'".*"following".*"${DOTENV_BUILD_MATRIX_NAME}"
+}
+
 # ....Test bad input parameter.....................................................................
 @test "${TESTED_FILE} › case where the dotenv build matrix is missing with or without a --help flag › execute ok › expect pass" {
 
