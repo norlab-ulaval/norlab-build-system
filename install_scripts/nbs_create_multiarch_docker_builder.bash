@@ -16,7 +16,7 @@ function nbs::create_multiarch_docker_builder() {
   NBS_PATH=$(git rev-parse --show-toplevel)
 
   # ....Load environment variables from file.......................................................
-  cd "${NBS_PATH}" || exit
+  cd "${NBS_PATH}" || exit 1
   set -o allexport
   source .env.nbs
   set +o allexport

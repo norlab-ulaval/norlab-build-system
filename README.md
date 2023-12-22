@@ -216,15 +216,15 @@ SPROJECT_BUILD_SYSTEM_PATH="${SPROJECT_ROOT}/build_system"
 NBS_PATH="${SPROJECT_ROOT}/utilities/norlab-build-system"
 
 # ....Load environment variables from file..............................................
-cd "${SPROJECT_BUILD_SYSTEM_PATH}" || exit
+cd "${SPROJECT_BUILD_SYSTEM_PATH}" || exit 1
 set -o allexport && source .env && set +o allexport
 
 # ....Source NBS dependencies...........................................................
-cd "${NBS_PATH}" || exit
+cd "${NBS_PATH}" || exit 1
 source import_norlab_build_system_lib.bash
 
 # ====begin=============================================================================
-cd "${NBS_PATH}/src/utility_scripts" || exit
+cd "${NBS_PATH}/src/utility_scripts" || exit 1
 
 DOTENV_BUILD_MATRIX_REALPATH=${SPROJECT_BUILD_SYSTEM_PATH}/.env.build_matrix.dependencies
 

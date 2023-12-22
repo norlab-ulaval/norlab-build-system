@@ -22,7 +22,7 @@ function nbs::source_lib(){
   _REPO_ROOT="$(dirname "${_PATH_TO_SCRIPT}")"
 
   # ....Load environment variables from file.......................................................
-  cd "${_REPO_ROOT}" || exit
+  cd "${_REPO_ROOT}" || exit 1
   set -o allexport
   source .env.nbs
   set +o allexport
@@ -37,17 +37,17 @@ function nbs::source_lib(){
   source "import_norlab_shell_script_tools_lib.bash"
 
   # ....Source NBS functions.......................................................................
-  cd "${NBS_PATH}/src/function_library/build_tools" || exit
+  cd "${NBS_PATH}/src/function_library/build_tools" || exit 1
   for each_file in "$(pwd)"/*.bash ; do
       source "${each_file}"
   done
 
-  cd "${NBS_PATH}/src/function_library/container_tools" || exit
+  cd "${NBS_PATH}/src/function_library/container_tools" || exit 1
   for each_file in "$(pwd)"/*.bash ; do
       source "${each_file}"
   done
 
-  cd "${NBS_PATH}/src/function_library/dev_tools" || exit
+  cd "${NBS_PATH}/src/function_library/dev_tools" || exit 1
   for each_file in "$(pwd)"/*.bash ; do
       source "${each_file}"
   done

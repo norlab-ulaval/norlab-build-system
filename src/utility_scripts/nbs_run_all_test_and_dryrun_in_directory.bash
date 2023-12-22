@@ -24,7 +24,7 @@ MSG_END_FORMAT="\033[0m"
 function nbs::run_all_script_in_directory(){
   local _TMP_CWD
   _TMP_CWD=$(pwd)
-  cd "${SCRIPT_DIR_PATH}" || exit
+  cd "${SCRIPT_DIR_PATH}" || exit 1
 
   declare -a FILE_NAME
 
