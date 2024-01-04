@@ -92,6 +92,16 @@ function setup_dotenv_build_matrix_superproject() {
   assert_output --regexp "\[NBS done\]".*"FINAL › Build matrix completed with command".*"Completed".*"${TESTED_FILE}".*
 }
 
+# ....Dotenv related...............................................................................
+@test "${TESTED_FILE} › env var from dotenv file exported › expect pass" {
+
+  setup_dotenv_build_matrix_dependencies
+
+  run bash "${TESTED_FILE}" "${DOTENV_BUILD_MATRIX}" --fail-fast -- config --quiet
+  assert_output --regexp .*"\[NBS\]".*"Environment variables".*"(build matrix)".*"set for compose:".*"NBS_MATRIX_REPOSITORY_VERSIONS=\(latest\)".*"NBS_MATRIX_UBUNTU_SUPPORTED_VERSIONS=\(bionic focal jammy\)"
+
+}
+
 # ....Flag related tests...........................................................................
 @test "${TESTED_FILE} › flags are passed across script and function as expected › expect pass" {
 
