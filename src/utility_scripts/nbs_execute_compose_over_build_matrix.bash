@@ -216,11 +216,11 @@ print_msg "Build images specified in ${MSG_DIMMED_FORMAT}'${NBS_EXECUTE_BUILD_MA
 
 # Freeze build matrix env variable to prevent accidental override
 # Note: declare -r ==> set as read-only, declare -a  ==> set as an array
-declare -ra NBS_MATRIX_REPOSITORY_VERSIONS
-declare -ra NBS_MATRIX_CMAKE_BUILD_TYPE
-declare -ra NBS_MATRIX_SUPPORTED_OS
-declare -ra NBS_MATRIX_UBUNTU_SUPPORTED_VERSIONS
-declare -ra NBS_MATRIX_OSX_SUPPORTED_VERSIONS
+declare -ra NBS_MATRIX_REPOSITORY_VERSIONS=(${NBS_MATRIX_REPOSITORY_VERSIONS[@]})
+declare -ra NBS_MATRIX_CMAKE_BUILD_TYPE=(${NBS_MATRIX_CMAKE_BUILD_TYPE[@]})
+declare -ra NBS_MATRIX_SUPPORTED_OS=(${NBS_MATRIX_SUPPORTED_OS[@]})
+declare -ra NBS_MATRIX_UBUNTU_SUPPORTED_VERSIONS=(${NBS_MATRIX_UBUNTU_SUPPORTED_VERSIONS[@]})
+declare -ra NBS_MATRIX_OSX_SUPPORTED_VERSIONS=(${NBS_MATRIX_OSX_SUPPORTED_VERSIONS[@]})
 
 print_msg "Environment variables ${MSG_EMPH_FORMAT}(build matrix)${MSG_END_FORMAT} set for compose:\n
 ${MSG_DIMMED_FORMAT}    NBS_MATRIX_REPOSITORY_VERSIONS=(${NBS_MATRIX_REPOSITORY_VERSIONS[*]}) ${MSG_END_FORMAT}
