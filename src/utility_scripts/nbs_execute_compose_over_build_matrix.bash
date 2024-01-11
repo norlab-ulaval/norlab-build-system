@@ -4,7 +4,7 @@
 #
 # Usage:
 #   $ cd <path/to>/norlab-build-system/src/utility_scripts/
-#   $ bash nbs_execute_compose_over_build_matrix.bash [--help] <.env.build_matrix.*> [<optional flag>] [-- <any docker cmd+arg>]
+#   $ [bash|source] nbs_execute_compose_over_build_matrix.bash [--help] <.env.build_matrix.*> [<optional flag>] [-- <any docker cmd+arg>]
 #
 #  e.g.:
 #   $ bash nbs_execute_compose_over_build_matrix.bash ".env.build_matrix" -- build --dry-run
@@ -44,22 +44,40 @@
 #set -v
 #set -x
 
+MSG_ERROR_FORMAT="\033[1;31m"
+MSG_DIMMED_FORMAT="\033[1;2m"
+MSG_END_FORMAT="\033[0m"
+
+
 # ....Pre-condition................................................................................
 if [[ "$(basename "$(pwd)")" != "utility_scripts" ]]; then
-  echo -e "\n[\033[1;31mERROR\033[0m] 'nbs_execute_compose_over_build_matrix.bash' script must be executed from the 'norlab-build-system/src/utility_scripts/' directory!\n Curent working directory is '$(pwd)'" 1>&2
-  echo '(press any key to exit)'
-  read -r -n 1
+  echo -e "\n${MSG_ERROR_FORMAT}[ERROR]${MSG_END_FORMAT} 'nbs_execute_compose_over_build_matrix.bash' script must be executed from the 'norlab-build-system/src/utility_scripts/' directory!\n Curent working directory is '$(pwd)'" 1>&2
   exit 1
 fi
 
-# ....path resolution logic........................................................................
-SCRIPT_PATH="$(realpath "$0")"
-NBS_PATH="$(dirname "${SCRIPT_PATH}")/../.."
+if [[ "${BASH_SOURCE[0]}" = "$0" ]]; then
+  # This script is being run, ie: __name__="__main__"
+
+  # ....Helper function............................................................................
+  # import shell functions from utilities library
+  SCRIPT_PATH="$(realpath "$0")"
+  NBS_PATH="$(dirname "${SCRIPT_PATH}")/../.."
+  source "${NBS_PATH}/import_norlab_build_system_lib.bash" || exit 1
+
+else
+  # This script is being sourced, ie: __name__="__source__"
+
+  if [[ "${NBS_IMPORTED}" != "true" ]]; then
+    echo -e "\n${MSG_ERROR_FORMAT}[ERROR]${MSG_END_FORMAT} You need to execute ${MSG_DIMMED_FORMAT}import_norlab_build_system_lib.bash${MSG_END_FORMAT} before sourcing ${MSG_DIMMED_FORMAT}nbs_execute_compose_over_build_matrix.bash${MSG_END_FORMAT} otherwise run it with bash." 1>&2
+    exit 1
+  else
+    # NBS was imported prior to the script execution
+    :
+  fi
+
+fi
 
 
-# ....Helper function..............................................................................
-# import shell functions from utilities library
-source "${NBS_PATH}/import_norlab_build_system_lib.bash"
 
 # ....Default......................................................................................
 DOCKER_COMPOSE_CMD_ARGS='build --dry-run'
