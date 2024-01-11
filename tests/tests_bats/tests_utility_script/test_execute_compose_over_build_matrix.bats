@@ -52,9 +52,6 @@ setup() {
   source "${SRC_CODE_PATH}"/build_system_templates/.env
   set +o allexport
 
-  cd "${SRC_CODE_PATH}"
-  source import_norlab_build_system_lib.bash
-
   cd "$TESTED_FILE_PATH" || exit 1
 }
 
@@ -80,6 +77,44 @@ function setup_dotenv_build_matrix_superproject() {
   DOTENV_BUILD_MATRIX="${SRC_CODE_PATH}"/build_system_templates/.env.build_matrix.project.template
   DOTENV_BUILD_MATRIX_NAME=$( basename "${DOTENV_BUILD_MATRIX}" )
 }
+
+@test "executing $TESTED_FILE from bad cwd › expect fail" {
+  cd "${BATS_DOCKER_WORKDIR}/src/"
+  run bash ./utility_scripts/$TESTED_FILE
+  assert_failure 1
+  assert_output --regexp  .*"\[".*"ERROR".*"\]".*"'nbs_execute_compose_over_build_matrix.bash' script must be executed from the 'norlab-build-system/src/utility_scripts/' directory!"
+}
+
+@test "sourcing $TESTED_FILE whitout importing NBS › expect fail" {
+
+  setup_dotenv_build_matrix_dependencies
+
+  assert_not_equal "$NBS_IMPORTED" true
+
+  run source "${TESTED_FILE}" "${DOTENV_BUILD_MATRIX}" --fail-fast -- build
+
+  assert_failure 1
+  assert_output --regexp  .*"\[".*"ERROR".*"\]".*"You need to execute".*"import_norlab_build_system_lib.bash".*"before sourcing".*"nbs_execute_compose_over_build_matrix.bash".*"otherwise run it with bash."
+}
+
+@test "sourcing $TESTED_FILE after importing NBS › expect fail" {
+
+  setup_dotenv_build_matrix_dependencies
+
+  assert_not_equal "$NBS_IMPORTED" true
+
+  cd "${SRC_CODE_PATH}"
+  source import_norlab_build_system_lib.bash
+
+  assert_equal "$NBS_IMPORTED" true
+
+  cd "$TESTED_FILE_PATH"
+  run source "${TESTED_FILE}" "${DOTENV_BUILD_MATRIX}" --fail-fast -- build
+
+  assert_success
+  refute_output --regexp  .*"\[".*"ERROR".*"\]".*"You need to execute".*"import_norlab_build_system_lib.bash".*"before sourcing".*"nbs_execute_compose_over_build_matrix.bash".*"otherwise run it with bash."
+}
+
 
 # ....Prompt related tests.........................................................................
 @test "${TESTED_FILE} › NBS console prompt name is not overiten by superproject dotenv PROJECT_PROMPT_NAME › expect pass" {
