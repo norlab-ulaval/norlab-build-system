@@ -296,6 +296,8 @@ for EACH_REPO_VERSION in "${NBS_MATRIX_REPOSITORY_VERSIONS[@]}"; do
                               --os-version "${EACH_OS_VERSION}" \
                               -- "${DOCKER_COMPOSE_CMD_ARGS}"
 
+        DOCKER_EXIT_CODE=$?
+
         # ....Collect image tags exported by nbs::execute_compose............................
         # Global: Read 'DOCKER_EXIT_CODE' env variable exported by function show_and_execute_docker
         if [[ ${DOCKER_EXIT_CODE} == 0 ]]; then
