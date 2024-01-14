@@ -61,7 +61,7 @@ if [[ "${BASH_SOURCE[0]}" = "$0" ]]; then
   # ....Helper function............................................................................
   # import shell functions from utilities library
   SCRIPT_PATH="$(realpath "$0")"
-  NBS_PATH="$(dirname "${SCRIPT_PATH}")/../.."
+  NBS_PATH="$( realpath "$(dirname "${SCRIPT_PATH}")/../.." )"
   source "${NBS_PATH}/import_norlab_build_system_lib.bash" || exit 1
 
 else
@@ -317,7 +317,7 @@ for EACH_REPO_VERSION in "${NBS_MATRIX_REPOSITORY_VERSIONS[@]}"; do
         # Collect image tags exported by nbs::execute_compose
         # Global: Read 'NBS_IMAGE_TAG' env variable exported by nbs::execute_compose
         if [[ ${EACH_CMAKE_BUILD_TYPE} == 'None' ]] || [[ -z ${EACH_CMAKE_BUILD_TYPE} ]]; then
-          IMAGE_TAG_CRAWLED=("${IMAGE_TAG_CRAWLED[@]}" "${MSG_STATUS} ${NBS_IMAGE_TAG}")
+          IMAGE_TAG_CRAWLED=("${IMAGE_TAG_CRAWLED[@]}" "${MSG_STATUS} ${NBS_IMAGE_TAG:?"Env variable not set"}")
           IMAGE_TAG_CRAWLED_TC=("${IMAGE_TAG_CRAWLED_TC[@]}" "${MSG_STATUS_TC_TAG} ${NBS_IMAGE_TAG}")
         else
           IMAGE_TAG_CRAWLED=("${IMAGE_TAG_CRAWLED[@]}" "${MSG_STATUS} ${NBS_IMAGE_TAG} Compile mode: ${EACH_CMAKE_BUILD_TYPE}")
