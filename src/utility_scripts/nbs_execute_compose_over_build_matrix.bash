@@ -82,6 +82,9 @@ fi
 # ....Default......................................................................................
 DOCKER_COMPOSE_CMD_ARGS='build --dry-run'
 BUILD_STATUS_PASS=0
+COMPOSE_EXIT_CODE=1
+
+
 
 # ....Project root logic...........................................................................
 TMP_CWD=$(pwd)
@@ -296,17 +299,17 @@ for EACH_REPO_VERSION in "${NBS_MATRIX_REPOSITORY_VERSIONS[@]}"; do
                               --os-version "${EACH_OS_VERSION}" \
                               -- "${DOCKER_COMPOSE_CMD_ARGS}"
 
-        DOCKER_EXIT_CODE=$?
+        COMPOSE_EXIT_CODE=$?
 
         # ....Collect image tags exported by nbs::execute_compose............................
-        # Global: Read 'DOCKER_EXIT_CODE' env variable exported by function show_and_execute_docker
-        if [[ ${DOCKER_EXIT_CODE} == 0 ]]; then
+        # Global: Read 'COMPOSE_EXIT_CODE' env variable exported by function show_and_execute_docker
+        if [[ ${COMPOSE_EXIT_CODE} == 0 ]]; then
           MSG_STATUS="${MSG_DONE_FORMAT}Pass ${MSG_DIMMED_FORMAT}›"
           MSG_STATUS_TC_TAG="Pass ›"
         else
           MSG_STATUS="${MSG_ERROR_FORMAT}Fail ${MSG_DIMMED_FORMAT}›"
           MSG_STATUS_TC_TAG="Fail ›"
-          BUILD_STATUS_PASS=$DOCKER_EXIT_CODE
+          BUILD_STATUS_PASS=$COMPOSE_EXIT_CODE
 
           if [[ ${TEAMCITY_VERSION} ]]; then
             # Fail the build › Will appear on the TeamCity Build Results page

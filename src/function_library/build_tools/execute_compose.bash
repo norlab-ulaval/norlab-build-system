@@ -35,6 +35,12 @@
 #   Dont use "set -e" in this script as it will affect the build system policy, use the --fail-fast flag instead
 #
 
+# Variable set for export
+declare -x REPOSITORY_VERSION
+declare -x CMAKE_BUILD_TYPE
+declare -x DEPENDENCIES_BASE_IMAGE
+declare -x DEPENDENCIES_BASE_IMAGE_TAG
+declare -x NBS_IMAGE_TAG
 
 function nbs::execute_compose() {
   # ....Default....................................................................................
@@ -43,7 +49,9 @@ function nbs::execute_compose() {
   OS_NAME='ubuntu'
   OS_VERSION='focal'
   DOCKER_COMPOSE_CMD_ARGS='build --dry-run'  # alt: "build --no-cache --push" or "up --build --force-recreate"
-  _CI_TEST=false
+  local _CI_TEST=false
+  local DOCKER_EXIT_CODE=1
+  local MAIN_DOCKER_EXIT_CODE=1
 
   # ....Project root logic.........................................................................
   local TMP_CWD=$(pwd)
@@ -203,6 +211,7 @@ function nbs::execute_compose() {
   ## docker compose run [OPTIONS] SERVICE [COMMAND] [ARGS...]
 
   show_and_execute_docker "compose -f ${_COMPOSE_FILE} ${DOCKER_COMPOSE_CMD_ARGS}" "$_CI_TEST"
+  MAIN_DOCKER_EXIT_CODE="${DOCKER_EXIT_CODE:?"variable was not set by n2st::show_and_execute_docker"}"
 
 
   print_msg "Environment variables used by compose:\n
@@ -215,5 +224,5 @@ function nbs::execute_compose() {
   # ====Teardown===================================================================================
   cd "${TMP_CWD}"
 
-  return "${DOCKER_EXIT_CODE:?"variable was not set by n2st::show_and_execute_docker"}"
+  return "${MAIN_DOCKER_EXIT_CODE:?"variable was not set by n2st::show_and_execute_docker"}"
 }
