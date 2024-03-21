@@ -11,7 +11,7 @@ services:
       context: ..
       # (Priority) ToDo: change path to dockerfile
       dockerfile: ${NBS_SUPERPROJECT_BUILD_SYSTEM_DIR:?err}/nbs_container/project-core/Dockerfile.project.ci_PR
-      no_cache: true
+      no_cache: false
       args:
         PROJECT_HUB: ${NBS_DOCKERHUB_NAMESPACE}
         BASE_IMAGE: ${NBS_REPOSITORY_NAME}-dependencies
@@ -30,15 +30,20 @@ services:
     build:
       platforms:
         - "linux/amd64"
-  ci_PR_arm64v8:
+    depends_on:
+      - ci_PR
+  ci_PR_arm64:
     extends: ci_PR
     build:
       platforms:
         - "linux/arm64"
+    depends_on:
+      - ci_PR
 
   # ====Dockerhub release image====================================================================
   release:
     image: ${NBS_DOCKERHUB_NAMESPACE:?err}/${NBS_REPOSITORY_NAME}:${NBS_IMAGE_TAG:?err}
+    pull_policy: build
     container_name: ${NBS_REPOSITORY_NAME}
     build:
       context: ..
@@ -46,8 +51,8 @@ services:
       dockerfile: ${NBS_SUPERPROJECT_BUILD_SYSTEM_DIR:?err}/nbs_container/project-core/Dockerfile.project.hub_release
       platforms:
         - "linux/amd64"
-        - "linux/arm64/v8"
-      no_cache: true
+        - "linux/arm64"
+      no_cache: false
       args:
         PROJECT_HUB: ${NBS_DOCKERHUB_NAMESPACE}
         BASE_IMAGE: ${NBS_REPOSITORY_NAME}-dependencies
