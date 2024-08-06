@@ -15,16 +15,17 @@
 # Globals: none
 #
 # =================================================================================================
-PARAMS="$@"
+set -e
 
+# ....Pass argument................................................................................
+PARAMS="$@"
 if [[ -z $PARAMS ]]; then
   # Set to default bats tests directory if none specified
   PARAMS="tests/"
 fi
 
 function nbs::run_n2st_testsing_tools(){
-  local TMP_CWD
-  TMP_CWD=$(pwd)
+  pushd "$(pwd)" >/dev/null || exit 1
 
   # ....Project root logic.........................................................................
   NBS_PATH=$(git rev-parse --show-toplevel)
@@ -37,7 +38,8 @@ function nbs::run_n2st_testsing_tools(){
   bash "${N2ST_PATH}/tests/bats_testing_tools/run_bats_tests_in_docker.bash" $PARAMS
 
   # ....Teardown...................................................................................
-  cd "$TMP_CWD"
+  popd >/dev/null || exit 1
   }
 
+# ::::Main:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 nbs::run_n2st_testsing_tools
