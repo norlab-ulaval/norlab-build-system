@@ -19,7 +19,7 @@ function nbs::install_python_dev_tools() {
 
   if [[ $(uname) == 'Linux' ]]; then
 
-    sudo update-ca-certificates
+    sudo update-ca-certificates --verbose
 
     # Retrieve ubuntu version number
     source /etc/lsb-release
