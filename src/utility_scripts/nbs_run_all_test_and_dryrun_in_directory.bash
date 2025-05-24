@@ -65,7 +65,7 @@ function nbs::run_all_script_in_directory(){
 
   echo -e "Results from ${MSG_DIMMED_FORMAT}$0${MSG_END_FORMAT} in directory ${MSG_DIMMED_FORMAT}$( basename "${SCRIPT_DIR_PATH}" )/${MSG_END_FORMAT} \n"
   for each_file_run in "${FILE_NAME[@]}" ; do
-      echo "$each_file_run"
+      echo -e "$each_file_run"
   done
 
   # ====Teardown===================================================================================
