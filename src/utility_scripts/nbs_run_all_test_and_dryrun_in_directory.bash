@@ -12,12 +12,11 @@
 #
 
 
-
-
 SCRIPT_DIR_PATH="${1:?'[ERROR] Missing mandatory path to directory to run script'}"
 
 MSG_DIMMED_FORMAT="\033[1;2m"
 MSG_ERROR_FORMAT="\033[1;31m"
+MSG_DONE_FORMAT="\033[1;32m"
 MSG_END_FORMAT="\033[0m"
 
 function nbs::run_all_script_in_directory(){
@@ -37,9 +36,11 @@ function nbs::run_all_script_in_directory(){
     if [[ -f $each_file ]]; then
       bash "${each_file}"
       EXIT_CODE=$?
-      FILE_NAME+=( "   exit code $EXIT_CODE ‹ $( basename "${each_file}" )")
       if [[ ${EXIT_CODE} != 0 ]]; then
+          FILE_NAME+=( "${MSG_ERROR_FORMAT}   exit code $EXIT_CODE ‹ $( basename "${each_file}" )${MSG_END_FORMAT}")
           OVERALL_EXIT_CODE=${EXIT_CODE}
+      else
+        FILE_NAME+=( "${MSG_DONE_FORMAT}   exit code $EXIT_CODE ‹ $( basename "${each_file}" )${MSG_END_FORMAT}")
       fi
     fi
   done
@@ -49,12 +50,18 @@ function nbs::run_all_script_in_directory(){
     if [[ -f $each_file ]]; then
       bash "${each_file}"
       EXIT_CODE=$?
-      FILE_NAME+=( "   exit code $EXIT_CODE ‹ $( basename "${each_file}" )")
       if [[ ${EXIT_CODE} != 0 ]]; then
+          FILE_NAME+=( "${MSG_ERROR_FORMAT}   exit code $EXIT_CODE ‹ $( basename "${each_file}" )${MSG_END_FORMAT}")
           OVERALL_EXIT_CODE=${EXIT_CODE}
+      else
+        FILE_NAME+=( "${MSG_DONE_FORMAT}   exit code $EXIT_CODE ‹ $( basename "${each_file}" )${MSG_END_FORMAT}")
       fi
     fi
   done
+
+
+  # ....Show result................................................................................
+  clear
 
   echo -e "Results from ${MSG_DIMMED_FORMAT}$0${MSG_END_FORMAT} in directory ${MSG_DIMMED_FORMAT}$( basename "${SCRIPT_DIR_PATH}" )/${MSG_END_FORMAT} \n"
   for each_file_run in "${FILE_NAME[@]}" ; do
@@ -62,7 +69,7 @@ function nbs::run_all_script_in_directory(){
   done
 
   # ====Teardown===================================================================================
-  cd "${_TMP_CWD}"
+  cd "${_TMP_CWD}" || exit 1
 
   return $OVERALL_EXIT_CODE
 }
