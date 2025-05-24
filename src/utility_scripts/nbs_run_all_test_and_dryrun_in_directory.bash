@@ -12,8 +12,6 @@
 #
 
 
-
-
 SCRIPT_DIR_PATH="${1:?'[ERROR] Missing mandatory path to directory to run script'}"
 
 MSG_DIMMED_FORMAT="\033[1;2m"
@@ -56,13 +54,17 @@ function nbs::run_all_script_in_directory(){
     fi
   done
 
+
+  # ....Show result................................................................................
+  clear
+
   echo -e "Results from ${MSG_DIMMED_FORMAT}$0${MSG_END_FORMAT} in directory ${MSG_DIMMED_FORMAT}$( basename "${SCRIPT_DIR_PATH}" )/${MSG_END_FORMAT} \n"
   for each_file_run in "${FILE_NAME[@]}" ; do
       echo "$each_file_run"
   done
 
   # ====Teardown===================================================================================
-  cd "${_TMP_CWD}"
+  cd "${_TMP_CWD}" || exit 1
 
   return $OVERALL_EXIT_CODE
 }
