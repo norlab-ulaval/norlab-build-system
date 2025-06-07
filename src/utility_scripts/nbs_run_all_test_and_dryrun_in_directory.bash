@@ -35,13 +35,17 @@ function nbs::run_all_script_in_directory(){
   # ....Run bash script prefixed with "dryrun_"....................................................
   for each_file in "${target_dir_path}"/dryrun_*.bash ; do
     if [[ -f $each_file ]]; then
+      each_file_name="$( basename "${each_file}" )"
+      n2st::print_msg "Starting ${each_file_name}"
       bash "${each_file}"
       exit_code=$?
       if [[ ${exit_code} != 0 ]]; then
-          file_name+=( "${MSG_ERROR_FORMAT}   exit code $exit_code ‹ $( basename "${each_file}" )${MSG_END_FORMAT}")
-          overall_exit_code=${exit_code}
+        n2st::print_msg_error "Completed ${each_file_name} with error"
+        file_name+=( "${MSG_ERROR_FORMAT}   exit code $exit_code ‹ ${each_file_name}${MSG_END_FORMAT}")
+        overall_exit_code=${exit_code}
       else
-        file_name+=( "${MSG_DONE_FORMAT}   exit code $exit_code ‹ $( basename "${each_file}" )${MSG_END_FORMAT}")
+        n2st::print_msg_done "Completed ${each_file_name}"
+        file_name+=( "${MSG_DONE_FORMAT}   exit code $exit_code ‹ ${each_file_name}${MSG_END_FORMAT}")
       fi
     fi
   done
@@ -49,19 +53,24 @@ function nbs::run_all_script_in_directory(){
   # ....Run bash script prefixed with "test_"......................................................
   for each_file in "${target_dir_path}"/test_*.bash ; do
     if [[ -f $each_file ]]; then
+      each_file_name="$( basename "${each_file}" )"
+      n2st::print_msg "Starting ${each_file_name}"
       bash "${each_file}"
       exit_code=$?
       if [[ ${exit_code} != 0 ]]; then
-          file_name+=( "${MSG_ERROR_FORMAT}   exit code $exit_code ‹ $( basename "${each_file}" )${MSG_END_FORMAT}")
-          overall_exit_code=${exit_code}
+        n2st::print_msg_error "Completed ${each_file_name} with error"
+        file_name+=( "${MSG_ERROR_FORMAT}   exit code $exit_code ‹ ${each_file_name}${MSG_END_FORMAT}")
+        overall_exit_code=${exit_code}
       else
-        file_name+=( "${MSG_DONE_FORMAT}   exit code $exit_code ‹ $( basename "${each_file}" )${MSG_END_FORMAT}")
+        n2st::print_msg_done "Completed ${each_file_name}"
+        file_name+=( "${MSG_DONE_FORMAT}   exit code $exit_code ‹ ${each_file_name}${MSG_END_FORMAT}")
       fi
     fi
   done
 
 
   # ....Show result................................................................................
+  n2st::set_is_teamcity_run_environment_variable
   n2st::norlab_splash "${NBS_SPLASH_NAME_BUILD_SYSTEM:-NorLab-Build-System}" "https://github.com/norlab-ulaval/norlab-build-system.git"
 
   echo -e "Results from ${MSG_DIMMED_FORMAT}$0${MSG_END_FORMAT} in directory ${MSG_DIMMED_FORMAT}$( basename "${target_dir_path}" )/${MSG_END_FORMAT} \n"
