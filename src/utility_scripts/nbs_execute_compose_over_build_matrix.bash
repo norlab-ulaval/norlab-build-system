@@ -1,4 +1,5 @@
 #!/bin/bash
+# =================================================================================================
 #
 # Execute build matrix over docker compose file specified in '.env.build_matrix.<mySuperProject>'
 #
@@ -39,6 +40,7 @@
 # Note:
 #   Dont use "set -e" in this script as it will affect the build system policy, use the --fail-fast flag instead
 #
+# =================================================================================================
 
 ## Debug flags
 #set -v
