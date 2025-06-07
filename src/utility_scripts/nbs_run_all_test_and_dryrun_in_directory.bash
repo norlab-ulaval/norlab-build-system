@@ -70,9 +70,11 @@ function nbs::run_all_script_in_directory(){
 
 
   # ....Show result................................................................................
-  n2st::set_is_teamcity_run_environment_variable
-  n2st::norlab_splash "${NBS_SPLASH_NAME_BUILD_SYSTEM:-NorLab-Build-System}" "https://github.com/norlab-ulaval/norlab-build-system.git"
-
+  (
+    set +o nounset    # Dont exit on exit on unbound variable
+    n2st::set_is_teamcity_run_environment_variable
+    n2st::norlab_splash "${NBS_SPLASH_NAME_BUILD_SYSTEM:-NorLab-Build-System}" "https://github.com/norlab-ulaval/norlab-build-system.git"
+  )
   echo -e "Results from ${MSG_DIMMED_FORMAT}$0${MSG_END_FORMAT} in directory ${MSG_DIMMED_FORMAT}$( basename "${target_dir_path}" )/${MSG_END_FORMAT} \n"
   for each_file_run in "${file_name[@]}" ; do
       echo -e "$each_file_run"
