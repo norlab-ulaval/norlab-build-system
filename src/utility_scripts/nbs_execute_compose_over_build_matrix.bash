@@ -57,7 +57,7 @@ if [[ "$(basename "$(pwd)")" != "utility_scripts" ]]; then
   exit 1
 fi
 
-if [[ "${BASH_SOURCE[0]}" = "$0" ]]; then
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
   # This script is being run, ie: __name__="__main__"
 
   # ....Helper function............................................................................

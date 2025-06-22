@@ -21,8 +21,10 @@ NBS_PATH="$( realpath "$(dirname "${SCRIPT_PATH}")/../.." )"
 
 # ....Helper function..............................................................................
 # import shell functions from utilities library
-source "${NBS_PATH}/import_norlab_build_system_lib.bash"
-
+{
+  cd "${NBS_PATH}"
+  source "import_norlab_build_system_lib.bash"
+}
 
 # ====Begin========================================================================================
 nbs::install_python_dev_tools

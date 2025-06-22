@@ -92,10 +92,23 @@ if [[ "${BASH_SOURCE[0]}" = "$0" ]]; then
   echo -e "${MSG_ERROR_FORMAT}[ERROR]${MSG_END_FORMAT} This script must be sourced i.e.: $ source $( basename "$0" )" 1>&2
   exit 1
 else
-  # This script is being sourced, ie: __name__="__source__"
-  script_path="$(realpath -q "${BASH_SOURCE[0]:-.}")"
-  script_path_parent="$(dirname "${script_path}")"
-  source "${script_path_parent}/../../import_norlab_build_system_lib.bash" || exit 1
+  # ....Find path to script........................................................................
+  # Note: can handle both sourcing cases
+  #   i.e. from within a script or from an interactive terminal session
+  # Check if running interactively
+  if [[ $- == *i* ]]; then
+    # Case: running in an interactive session
+    target_path=$(realpath .)
+  else
+    # Case: running in an non-interactive session
+    script_path="$(realpath -q "${BASH_SOURCE[0]:-.}")"
+    target_path="$(dirname "${script_path}")"
+  fi
+
+#  # This script is being sourced, ie: __name__="__source__"
+#  script_path="$(realpath -q "${BASH_SOURCE[0]:-.}")"
+#  target_path="$(dirname "${script_path}")"
+  source "${target_path}/../../import_norlab_build_system_lib.bash" || exit 1
 
   nbs::run_all_script_in_directory "$@"
   exit $?
