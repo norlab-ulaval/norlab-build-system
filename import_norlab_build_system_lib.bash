@@ -13,16 +13,26 @@ MSG_ERROR_FORMAT="\033[1;31m"
 MSG_END_FORMAT="\033[0m"
 
 function nbs::source_lib(){
-  local TMP_CWD
-  TMP_CWD=$(pwd)
+  local tmp_cwd
+  tmp_cwd=$(pwd)
 
-  # ....path resolution logic......................................................................
-  # Note: can handle both sourcing cases, ie from within a script and from an interactive terminal
-  _PATH_TO_SCRIPT="$(realpath "${BASH_SOURCE[0]:-'.'}")"
-  _REPO_ROOT="$(dirname "${_PATH_TO_SCRIPT}")"
+  # ....Find path to script........................................................................
+  # Note: can handle both sourcing cases
+  #   i.e. from within a script or from an interactive terminal session
+  local script_path
+  local target_path
+  # Check if running interactively
+  if [[ $- == *i* ]]; then
+    # Case: running in an interactive session
+    target_path=$(realpath .)
+  else
+    # Case: running in an non-interactive session
+    script_path="$(realpath -q "${BASH_SOURCE[0]:-.}")"
+    target_path="$(dirname "${script_path}")"
+  fi
 
   # ....Load environment variables from file.......................................................
-  cd "${_REPO_ROOT}" || exit 1
+  cd "${target_path}" || exit 1
   set -o allexport
   source .env.nbs
   set +o allexport
@@ -56,7 +66,7 @@ function nbs::source_lib(){
   export NBS_IMPORTED=true
 
   # ====Teardown===================================================================================
-  cd "${TMP_CWD}"
+  cd "${tmp_cwd}"
 }
 
 # ::::Main:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
