@@ -5,10 +5,10 @@
 # Usage in a script:
 #
 #   #!/bin/bash
-#   path_to_script="$(realpath "${BASH_SOURCE[0]:-'.'}")"
-#   target_dir_path="$(dirname "${path_to_script}")"
-#   nbs_util_script="${target_dir_path}/../../src/utility_scripts"
-#   source "${nbs_util_script}/nbs_run_all_test_and_dryrun_in_directory.bash" "${target_dir_path}"
+#   path_to_script="$(realpath "$0")"
+#   script_dir_path="$(dirname "${path_to_script}")"
+#   test_dir="$script_dir_path/tests_docker_dryrun_and_config"
+#   source "${script_dir_path}/../src/utility_scripts/nbs_run_all_test_and_dryrun_in_directory.bash" "${test_dir}"
 #
 # Globals:
 #   none
@@ -93,7 +93,7 @@ if [[ "${BASH_SOURCE[0]}" = "$0" ]]; then
   exit 1
 else
   # This script is being sourced, ie: __name__="__source__"
-  script_path="$(realpath "${BASH_SOURCE[0]:-'.'}")"
+  script_path="$(realpath -q "${BASH_SOURCE[0]:-.}")"
   script_path_parent="$(dirname "${script_path}")"
   source "${script_path_parent}/../../import_norlab_build_system_lib.bash" || exit 1
 
