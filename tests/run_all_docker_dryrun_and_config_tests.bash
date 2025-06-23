@@ -1,15 +1,18 @@
 #!/bin/bash
 # =================================================================================================
-# Run all tests in directory
+# Run all tests in 'tests/tests_docker_dryrun_and_config' directory
 #
 # Usage:
 #   $ bash run_all_docker_dryrun_and_config_tests.bash
 #
 # =================================================================================================
+test_dir="tests/tests_docker_dryrun_and_config"
 
+# ....Setup........................................................................................
 path_to_script="$(realpath "$0")"
 script_dir_path="$(dirname "${path_to_script}")"
-test_dir="$script_dir_path/tests_docker_dryrun_and_config"
+NBS_PATH="$( realpath -q "${script_dir_path}/.." )"
 
-source "${script_dir_path}/../src/utility_scripts/nbs_run_all_test_and_dryrun_in_directory.bash" "${test_dir}"
-
+# ....Begin........................................................................................
+source "${NBS_PATH:?err}/src/utility_scripts/nbs_run_all_test_and_dryrun_in_directory.bash" "${NBS_PATH}/${test_dir}"
+exit $?

@@ -14,7 +14,7 @@ MSG_END_FORMAT="\033[0m"
 function nbs::source_lib(){
 
   # ....Setup......................................................................................
-  local debug_log=false
+  local debug_flag=false
   local tmp_cwd
   tmp_cwd=$(pwd)
   local script_path
@@ -34,7 +34,7 @@ function nbs::source_lib(){
       target_path="$(dirname "${script_path}")"
     fi
 
-    if [[ ${debug_log} == true ]]; then
+    if [[ ${debug_flag} == true ]]; then
       echo "
       BASH_SOURCE: ${BASH_SOURCE[*]}
 
